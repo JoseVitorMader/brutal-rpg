@@ -1,192 +1,569 @@
+/* ==================== LAYOUT GERAL ==================== */
 .character-sheet {
-  padding: 20px;
-  background: #1a1a2e;
+  padding: 10px;
+  background: transparent;
   color: #fff;
   min-height: 100vh;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
-.sheet-header {
-  background: #0f3460;
+/* ==================== HEADER COMPACTO ==================== */
+.sheet-header-compact {
+  display: flex;
+  gap: 15px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #8B0000;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+/* Avatar */
+.char-avatar {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.char-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid #8B0000;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border: 2px solid #8B0000;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  color: #333;
+}
+
+.avatar-upload {
+  display: none;
+}
+
+.avatar-upload-label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #8B0000;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s;
+}
+
+.avatar-upload-label:hover {
+  background: #a00000;
+  transform: scale(1.1);
+}
+
+/* Identidade */
+.char-identity {
+  flex: 1;
+  display: flex;
+  gap: 15px;
+}
+
+.char-name-group,
+.char-origin-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.char-name-group label,
+.char-origin-group label,
+.char-class-group label {
+  font-size: 9px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.char-name-input,
+.char-origin-input,
+.char-jogador-input,
+.char-class-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #333;
+  color: #fff;
+  font-size: 16px;
+  padding: 4px 0;
+  font-weight: bold;
+}
+
+.char-name-input {
+  font-size: 18px;
+  border-bottom: 2px solid #8B0000;
+}
+
+.char-name-input:focus,
+.char-origin-input:focus,
+.char-jogador-input:focus,
+.char-class-input:focus {
+  outline: none;
+  border-bottom-color: #8B0000;
+}
+
+/* Classe */
+.char-class-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.char-class-input {
+  background: #000;
+  border: 1px solid #8B0000;
+  border-radius: 3px;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+/* ==================== LAYOUT PRINCIPAL ==================== */
+.sheet-main-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* ==================== COLUNA ESQUERDA ==================== */
+.sheet-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Círculos de Recursos */
+.resources-circle-section {
+  display: flex;
+  justify-content: space-around;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
   padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
+  border-radius: 6px;
+  border: 1px solid #8B0000;
+}
+
+.resource-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid #8B0000;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.resource-circle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(139, 0, 0, 0.6);
+  border-width: 4px;
+}
+
+.circle-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #8B0000;
+  line-height: 1;
+}
+
+.circle-label {
+  font-size: 9px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.circle-max {
+  font-size: 10px;
+  color: #444;
+}
+
+/* Tensão Total */
+.tensao-total-box {
+  background: #000;
+  border: 1px solid #8B0000;
+  border-radius: 4px;
+  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.sheet-header h1 {
-  color: #e94560;
-  margin: 0;
+.tensao-total-box label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.tensao-display {
+.tensao-total-input {
+  background: transparent;
+  border: none;
+  color: #8B0000;
+  font-size: 24px;
+  font-weight: bold;
+  width: 60px;
+  text-align: right;
+}
+
+.tensao-total-input:focus {
+  outline: none;
+}
+
+/* Perícias */
+.pericias-section {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  border: 1px solid #8B0000;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.pericias-section h2 {
+  font-size: 12px;
+  color: #8B0000;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 6px;
+}
+
+.pericias-table {
   display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pericias-header {
+  display: grid;
+  grid-template-columns: 1fr 60px 60px 50px;
+  gap: 8px;
+  font-size: 9px;
+  color: #666;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 4px;
+}
+
+.pericia-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 60px 50px;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #000;
+  border-radius: 3px;
   align-items: center;
-  gap: 15px;
-  background: #16213e;
-  padding: 15px 25px;
-  border-radius: 8px;
-  border: 2px solid #533483;
+  transition: all 0.2s;
 }
 
-.tensao-display label {
-  font-weight: bold;
-  color: #e94560;
+.pericia-row:hover {
+  background: #1a0000;
+  border: 1px solid #8B0000;
 }
 
-.tensao-input {
-  width: 80px;
-  padding: 8px;
-  border: 2px solid #533483;
-  border-radius: 5px;
-  background: #1a1a2e;
+.pericia-name-cell {
+  font-size: 13px;
   color: #fff;
-  font-size: 18px;
-  font-weight: bold;
+  font-weight: 500;
+}
+
+.pericia-dados,
+.pericia-bonus {
+  font-size: 11px;
+  color: #666;
   text-align: center;
 }
 
-.tensao-gasta {
-  color: #ff6b6b;
-  font-weight: bold;
-}
-
-.tensao-disponivel {
-  color: #51cf66;
-  font-weight: bold;
-}
-
-.sheet-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 20px;
-}
-
-.sheet-section {
-  background: #0f3460;
-  padding: 20px;
-  border-radius: 10px;
-  border: 2px solid #533483;
-}
-
-.sheet-section h2 {
-  color: #e94560;
-  margin-top: 0;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #533483;
-  padding-bottom: 10px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #b8b8d1;
-  font-weight: bold;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 10px;
-  border: 2px solid #533483;
-  border-radius: 5px;
-  background: #16213e;
-  color: #fff;
-  font-size: 14px;
-  font-family: inherit;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #e94560;
-  box-shadow: 0 0 8px rgba(233, 69, 96, 0.3);
-}
-
-.checkbox-group {
+.pericia-treino-cell {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  justify-content: center;
 }
 
-.checkbox-item {
+.pericia-treino-cell input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #8B0000;
+  cursor: pointer;
+}
+
+/* ==================== COLUNA DIREITA ==================== */
+.sheet-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Tabs */
+.sheet-tabs {
+  display: flex;
+  gap: 4px;
+  background: #000;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #333;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: transparent;
+  color: #666;
+  border: none;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tab-btn:hover {
+  background: #1a1a1a;
+  color: #888;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+}
+
+/* Apegos Compactos */
+.apegos-compact {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  border: 1px solid #8B0000;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.apego-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.apego-item label {
+  font-size: 9px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.apego-item input {
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 3px;
+  color: #fff;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.apego-item input:focus {
+  outline: none;
+  border-color: #8B0000;
+  box-shadow: 0 0 8px rgba(139, 0, 0, 0.3);
+}
+
+/* Vantagens Compactas */
+.vantagens-compact {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  border: 1px solid #8B0000;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.vantagens-compact h3 {
+  font-size: 11px;
+  color: #8B0000;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 6px;
+}
+
+.vantagens-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.vantagem-checkbox {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #16213e;
-  padding: 10px 15px;
-  border-radius: 5px;
+  padding: 6px 8px;
+  background: #000;
+  border-radius: 3px;
   cursor: pointer;
   transition: all 0.2s;
-  border: 2px solid transparent;
 }
 
-.checkbox-item:hover {
-  background: #1f2f50;
-  border-color: #533483;
+.vantagem-checkbox:hover {
+  background: #1a0000;
+  border: 1px solid #8B0000;
 }
 
-.checkbox-item input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+.vantagem-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #8B0000;
   cursor: pointer;
 }
 
-.pericia-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #16213e;
-  padding: 12px 15px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  border: 2px solid #533483;
+.vantagem-checkbox span {
+  font-size: 12px;
+  color: #ccc;
 }
 
-.pericia-name {
+/* Habilidades */
+.habilidades-compact,
+.marcadores-compact {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  border: 1px solid #8B0000;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.habilidades-compact h3,
+.marcadores-compact h3 {
+  font-size: 11px;
+  color: #8B0000;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 6px;
+}
+
+.habilidades-compact textarea,
+.marcadores-compact textarea {
+  width: 100%;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 3px;
+  color: #ccc;
+  padding: 8px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  resize: vertical;
+}
+
+.habilidades-compact textarea:focus,
+.marcadores-compact textarea:focus {
+  outline: none;
+  border-color: #8B0000;
+  box-shadow: 0 0 8px rgba(139, 0, 0, 0.3);
+}
+
+/* Ferida Níveis */
+.ferida-niveis {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ferida-box {
+  width: 36px;
+  height: 36px;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.ferida-box:hover {
+  border-color: #8B0000;
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.3);
+}
+
+.ferida-box input[type="checkbox"] {
+  display: none;
+}
+
+.ferida-box span {
+  font-size: 14px;
+  color: #666;
   font-weight: bold;
-  color: #b8b8d1;
+  pointer-events: none;
 }
 
-.appearance-preview {
-  margin-top: 15px;
-  text-align: center;
+.ferida-box:has(input[type="checkbox"]:checked) {
+  background: #1a0000;
+  border-color: #8B0000;
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
 }
 
-.appearance-preview img {
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: 10px;
-  border: 3px solid #533483;
+.ferida-box:has(input[type="checkbox"]:checked) span {
+  color: #8B0000;
 }
 
-.vantagem-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #16213e;
-  padding: 12px 15px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 2px solid transparent;
+/* ==================== RESPONSIVO ==================== */
+@media (max-width: 1200px) {
+  .sheet-main-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .resources-circle-section {
+    justify-content: space-evenly;
+  }
 }
 
-.vantagem-item:hover {
-  background: #1f2f50;
-  border-color: #533483;
-}
-
-.vantagem-item input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
+@media (max-width: 768px) {
+  .sheet-header-compact {
+    flex-direction: column;
+  }
+  
+  .char-identity {
+    flex-direction: column;
+  }
+  
+  .apegos-compact {
+    flex-direction: column;
+  }
+  
+  .sheet-tabs {
+    flex-wrap: wrap;
+  }
 }

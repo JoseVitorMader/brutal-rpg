@@ -118,290 +118,327 @@ const CharacterSheet = ({ user }) => {
     return total;
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Limitar tamanho do arquivo (2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Arquivo muito grande! Máximo 2MB.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updateCharacter({ aparencia: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="character-sheet">
-      <div className="sheet-header">
-        <h1>Ficha de Personagem - BRUTAL RPG</h1>
-        <div className="tensao-display">
-          <label>Tensão:</label>
+      {/* Header Compacto */}
+      <div className="sheet-header-compact">
+        <div className="char-avatar">
+          {character.aparencia ? (
+            <img src={character.aparencia} alt={character.nome} />
+          ) : (
+            <div className="avatar-placeholder">?</div>
+          )}
           <input
-            type="number"
-            value={character.tensao}
-            onChange={(e) => updateCharacter({ tensao: parseInt(e.target.value) || 0 })}
-            className="tensao-input"
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="avatar-upload"
+            id="avatar-upload"
           />
-          <span className="tensao-gasta">Gasta: {calcularTensaoGasta()}</span>
-          <span className="tensao-disponivel">Disponível: {character.tensao - calcularTensaoGasta()}</span>
+          <label htmlFor="avatar-upload" className="avatar-upload-label">📷</label>
         </div>
-      </div>
-
-      <div className="sheet-grid">
-        {/* Informações Básicas */}
-        <div className="sheet-section">
-          <h2>Informações Básicas</h2>
-          <div className="form-group">
-            <label>Nome:</label>
+        
+        <div className="char-identity">
+          <div className="char-name-group">
+            <label>PERSONAGEM</label>
             <input
               type="text"
               value={character.nome}
               onChange={(e) => updateCharacter({ nome: e.target.value })}
+              placeholder="Miguel de Andrade"
+              className="char-name-input"
             />
           </div>
-          <div className="form-group">
-            <label>Pronomes:</label>
+          <div className="char-origin-group">
+            <label>ORIGEM</label>
             <input
               type="text"
               value={character.pronomes}
               onChange={(e) => updateCharacter({ pronomes: e.target.value })}
+              placeholder="Religioso"
+              className="char-origin-input"
             />
           </div>
-          <div className="form-group">
-            <label>Intérprete:</label>
+        </div>
+
+        <div className="char-class-group">
+          <label>JOGADOR</label>
+          <input
+            type="text"
+            value={character.interprete}
+            onChange={(e) => updateCharacter({ interprete: e.target.value })}
+            className="char-jogador-input"
+          />
+          <label>CLASSE</label>
+          <select
+            value={character.arquetipo}
+            onChange={(e) => updateCharacter({ arquetipo: e.target.value })}
+            className="char-class-input"
+          >
+            <option value="">ESP. TÉCNICO</option>
+            {ARQUETIPOS.map(arq => (
+              <option key={arq} value={arq}>{arq}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Layout Principal - 2 Colunas */}
+      <div className="sheet-main-layout">
+        {/* Coluna Esquerda - Recursos e Perícias */}
+        <div className="sheet-left-column">
+          {/* Recursos Circulares */}
+          <div className="resources-circle-section">
+            <div className="resource-circle dados-circle" onClick={() => {
+              const filled = character.pilhaDados.filter(d => d).length;
+              if (filled < 6) {
+                const newPilha = [...character.pilhaDados];
+                for (let i = 0; i < newPilha.length; i++) {
+                  if (!newPilha[i]) {
+                    newPilha[i] = true;
+                    updateCharacter({ pilhaDados: newPilha });
+                    break;
+                  }
+                }
+              }
+            }}>
+              <div className="circle-value">{character.pilhaDados.filter(d => d).length}</div>
+              <div className="circle-label">DADOS</div>
+              <div className="circle-max">/ 6</div>
+            </div>
+            <div className="resource-circle fuga-circle" onClick={() => {
+              const filled = character.pilhaFuga.filter(d => d).length;
+              if (filled < 7) {
+                const newPilha = [...character.pilhaFuga];
+                for (let i = 0; i < newPilha.length; i++) {
+                  if (!newPilha[i]) {
+                    newPilha[i] = true;
+                    updateCharacter({ pilhaFuga: newPilha });
+                    break;
+                  }
+                }
+              }
+            }}>
+              <div className="circle-value">{character.pilhaFuga.filter(d => d).length}</div>
+              <div className="circle-label">FUGA</div>
+              <div className="circle-max">/ 7</div>
+            </div>
+            <div className="resource-circle tensao-circle">
+              <div className="circle-value">{character.tensao - calcularTensaoGasta()}</div>
+              <div className="circle-label">TENSÃO</div>
+              <div className="circle-max">/ {character.tensao}</div>
+            </div>
+          </div>
+
+          {/* Tensão Total */}
+          <div className="tensao-total-box">
+            <label>TENSÃO TOTAL</label>
             <input
-              type="text"
-              value={character.interprete}
-              onChange={(e) => updateCharacter({ interprete: e.target.value })}
+              type="number"
+              value={character.tensao}
+              onChange={(e) => updateCharacter({ tensao: parseInt(e.target.value) || 0 })}
+              className="tensao-total-input"
             />
           </div>
-          <div className="form-group">
-            <label>Arquétipo:</label>
-            <select
-              value={character.arquetipo}
-              onChange={(e) => updateCharacter({ arquetipo: e.target.value })}
-            >
-              <option value="">Selecione...</option>
-              {ARQUETIPOS.map(arq => (
-                <option key={arq} value={arq}>{arq}</option>
+
+          {/* Perícias */}
+          <div className="pericias-section">
+            <h2>PERÍCIAS</h2>
+            <div className="pericias-table">
+              <div className="pericias-header">
+                <span>PERÍCIA</span>
+                <span>DADOS</span>
+                <span>BÔNUS</span>
+                <span>Treino</span>
+              </div>
+              {PERICIAS.map(pericia => (
+                <div key={pericia} className="pericia-row">
+                  <span className="pericia-name-cell">{pericia}</span>
+                  <span className="pericia-dados">( D6 )</span>
+                  <span className="pericia-bonus">( 0 )</span>
+                  <label className="pericia-treino-cell">
+                    <input
+                      type="checkbox"
+                      checked={character.pericias[pericia].treinada}
+                      onChange={() => togglePericiaTreinada(pericia)}
+                    />
+                  </label>
+                </div>
               ))}
-            </select>
+            </div>
           </div>
         </div>
 
-        {/* Apegos */}
-        <div className="sheet-section">
-          <h2>Apegos</h2>
-          <div className="form-group">
-            <label>Item Icônico:</label>
-            <textarea
-              value={character.apegos.itemIconico}
-              onChange={(e) => updateCharacter({ 
-                apegos: { ...character.apegos, itemIconico: e.target.value }
-              })}
-              rows="2"
-            />
+        {/* Coluna Direita - Combate, Habilidades, etc */}
+        <div className="sheet-right-column">
+          {/* Abas Superiores */}
+          <div className="sheet-tabs">
+            <button className="tab-btn active">COMBATE</button>
+            <button className="tab-btn">HABILIDADES</button>
+            <button className="tab-btn">RITUAIS</button>
+            <button className="tab-btn">INVENTÁRIO</button>
+            <button className="tab-btn">DESCRIÇÃO</button>
           </div>
-          <div className="form-group">
-            <label>Relação Afetiva:</label>
-            <textarea
-              value={character.apegos.relacaoAfetiva}
-              onChange={(e) => updateCharacter({ 
-                apegos: { ...character.apegos, relacaoAfetiva: e.target.value }
-              })}
-              rows="2"
-            />
-          </div>
-          <div className="form-group">
-            <label>Desejo Obscuro:</label>
-            <textarea
-              value={character.apegos.desejoObscuro}
-              onChange={(e) => updateCharacter({ 
-                apegos: { ...character.apegos, desejoObscuro: e.target.value }
-              })}
-              rows="2"
-            />
-          </div>
-        </div>
 
-        {/* Pilhas */}
-        <div className="sheet-section">
-          <h2>Pilha de Dados (máx. 6)</h2>
-          <div className="checkbox-group">
-            {character.pilhaDados.map((checked, i) => (
-              <label key={i} className="checkbox-item">
+          {/* Área de Apegos */}
+          <div className="apegos-compact">
+            <div className="apego-item">
+              <label>ITEM ICÔNICO</label>
+              <input
+                type="text"
+                value={character.apegos.itemIconico}
+                onChange={(e) => updateCharacter({ 
+                  apegos: { ...character.apegos, itemIconico: e.target.value }
+                })}
+              />
+            </div>
+            <div className="apego-item">
+              <label>RELAÇÃO AFETIVA</label>
+              <input
+                type="text"
+                value={character.apegos.relacaoAfetiva}
+                onChange={(e) => updateCharacter({ 
+                  apegos: { ...character.apegos, relacaoAfetiva: e.target.value }
+                })}
+              />
+            </div>
+            <div className="apego-item">
+              <label>DESEJO OBSCURO</label>
+              <input
+                type="text"
+                value={character.apegos.desejoObscuro}
+                onChange={(e) => updateCharacter({ 
+                  apegos: { ...character.apegos, desejoObscuro: e.target.value }
+                })}
+              />
+            </div>
+          </div>
+
+          {/* Vantagens */}
+          <div className="vantagens-compact">
+            <h3>VANTAGENS GERAIS</h3>
+            <div className="vantagens-list">
+              <label className="vantagem-checkbox">
                 <input
                   type="checkbox"
-                  checked={checked}
-                  onChange={() => toggleCheckbox('pilhaDados', i)}
+                  checked={character.vantagensGerais.choqueRealidade}
+                  onChange={() => toggleCheckbox('vantagensGerais.choqueRealidade')}
                 />
-                Dado {i + 1}
+                <span>Choque de Realidade (6)</span>
               </label>
-            ))}
-          </div>
-        </div>
-
-        <div className="sheet-section">
-          <h2>Pilha de Fuga (7)</h2>
-          <div className="checkbox-group">
-            {character.pilhaFuga.map((checked, i) => (
-              <label key={i} className="checkbox-item">
+              <label className="vantagem-checkbox">
                 <input
                   type="checkbox"
-                  checked={checked}
-                  onChange={() => toggleCheckbox('pilhaFuga', i)}
+                  checked={character.vantagensGerais.cuidarFeridas}
+                  onChange={() => toggleCheckbox('vantagensGerais.cuidarFeridas')}
                 />
-                Fuga {i + 1}
+                <span>Cuidar de Feridas (1)</span>
               </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Marcadores e Ferida */}
-        <div className="sheet-section">
-          <h2>Marcadores</h2>
-          <textarea
-            value={character.marcadores}
-            onChange={(e) => updateCharacter({ marcadores: e.target.value })}
-            rows="4"
-            placeholder="Descreva seus marcadores..."
-          />
-        </div>
-
-        <div className="sheet-section">
-          <h2>Ferida</h2>
-          <div className="form-group">
-            <label>Descrição:</label>
-            <textarea
-              value={character.ferida.descricao}
-              onChange={(e) => updateCharacter({ 
-                ferida: { ...character.ferida, descricao: e.target.value }
-              })}
-              rows="2"
-            />
-          </div>
-          <div className="checkbox-group">
-            {character.ferida.niveis.map((checked, i) => (
-              <label key={i} className="checkbox-item">
+              <label className="vantagem-checkbox">
                 <input
                   type="checkbox"
-                  checked={checked}
-                  onChange={() => toggleCheckbox('ferida.niveis', i)}
+                  checked={character.vantagensGerais.tomarJeito}
+                  onChange={() => toggleCheckbox('vantagensGerais.tomarJeito')}
                 />
-                Nível {i + 1}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Perícias */}
-        <div className="sheet-section">
-          <h2>Perícias (máx. 2 treinadas)</h2>
-          {PERICIAS.map(pericia => (
-            <div key={pericia} className="pericia-item">
-              <span className="pericia-name">{pericia}</span>
-              <label className="checkbox-item">
-                <input
-                  type="checkbox"
-                  checked={character.pericias[pericia].treinada}
-                  onChange={() => togglePericiaTreinada(pericia)}
-                />
-                Treinada
+                <span>Tomar Jeito (3)</span>
               </label>
             </div>
-          ))}
-        </div>
+            
+            <h3>VANTAGENS DE ESPECIALIDADE</h3>
+            <div className="vantagens-list">
+              <label className="vantagem-checkbox">
+                <input
+                  type="checkbox"
+                  checked={character.vantagensEspecialidade.ombroAmigo}
+                  onChange={() => toggleCheckbox('vantagensEspecialidade.ombroAmigo')}
+                />
+                <span>Ombro Amigo (2)</span>
+              </label>
+              <label className="vantagem-checkbox">
+                <input
+                  type="checkbox"
+                  checked={character.vantagensEspecialidade.adrenalina}
+                  onChange={() => toggleCheckbox('vantagensEspecialidade.adrenalina')}
+                />
+                <span>Adrenalina (2)</span>
+              </label>
+              <label className="vantagem-checkbox">
+                <input
+                  type="checkbox"
+                  checked={character.vantagensEspecialidade.cacarRecurso}
+                  onChange={() => toggleCheckbox('vantagensEspecialidade.cacarRecurso')}
+                />
+                <span>Caçar Recurso (3)</span>
+              </label>
+              <label className="vantagem-checkbox">
+                <input
+                  type="checkbox"
+                  checked={character.vantagensEspecialidade.prepararProxima}
+                  onChange={() => toggleCheckbox('vantagensEspecialidade.prepararProxima')}
+                />
+                <span>Preparar Próxima (3)</span>
+              </label>
+              <label className="vantagem-checkbox">
+                <input
+                  type="checkbox"
+                  checked={character.vantagensEspecialidade.naoEsperaPorMim}
+                  onChange={() => toggleCheckbox('vantagensEspecialidade.naoEsperaPorMim')}
+                />
+                <span>Não Espera Por Mim (3)</span>
+              </label>
+            </div>
+          </div>
 
-        {/* Habilidades */}
-        <div className="sheet-section">
-          <h2>Habilidades</h2>
-          <textarea
-            value={character.habilidades}
-            onChange={(e) => updateCharacter({ habilidades: e.target.value })}
-            rows="6"
-            placeholder="Descreva suas habilidades..."
-          />
-        </div>
-
-        {/* Aparência */}
-        <div className="sheet-section">
-          <h2>Aparência</h2>
-          <div className="form-group">
-            <label>URL da Imagem:</label>
-            <input
-              type="text"
-              value={character.aparencia}
-              onChange={(e) => updateCharacter({ aparencia: e.target.value })}
-              placeholder="https://..."
+          {/* Habilidades */}
+          <div className="habilidades-compact">
+            <h3>HABILIDADES</h3>
+            <textarea
+              value={character.habilidades}
+              onChange={(e) => updateCharacter({ habilidades: e.target.value })}
+              rows="4"
+              placeholder="Descreva suas habilidades especiais..."
             />
           </div>
-          {character.aparencia && (
-            <div className="appearance-preview">
-              <img src={character.aparencia} alt="Aparência do personagem" />
+
+          {/* Marcadores */}
+          <div className="marcadores-compact">
+            <h3>MARCADORES / FERIDA</h3>
+            <textarea
+              value={character.marcadores}
+              onChange={(e) => updateCharacter({ marcadores: e.target.value })}
+              rows="3"
+              placeholder="Marcadores e descrição de feridas..."
+            />
+            <div className="ferida-niveis">
+              {character.ferida.niveis.map((checked, i) => (
+                <label key={i} className="ferida-box">
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => toggleCheckbox('ferida.niveis', i)}
+                  />
+                  <span>{i + 1}</span>
+                </label>
+              ))}
             </div>
-          )}
-        </div>
-
-        {/* Vantagens Gerais */}
-        <div className="sheet-section">
-          <h2>Vantagens Gerais</h2>
-          <label className="vantagem-item">
-            <input
-              type="checkbox"
-              checked={character.vantagensGerais.choqueRealidade}
-              onChange={() => toggleCheckbox('vantagensGerais.choqueRealidade')}
-            />
-            Choque de Realidade (6 pontos)
-          </label>
-          <label className="vantagem-item">
-            <input
-              type="checkbox"
-              checked={character.vantagensGerais.cuidarFeridas}
-              onChange={() => toggleCheckbox('vantagensGerais.cuidarFeridas')}
-            />
-            Cuidar de Feridas (1 ponto)
-          </label>
-          <label className="vantagem-item">
-            <input
-              type="checkbox"
-              checked={character.vantagensGerais.tomarJeito}
-              onChange={() => toggleCheckbox('vantagensGerais.tomarJeito')}
-            />
-            Tomar Jeito (3 pontos)
-          </label>
-        </div>
-
-        {/* Vantagens de Especialidade */}
-        <div className="sheet-section">
-          <h2>Vantagens de Especialidade</h2>
-          <label className="vantagem-item">
-            <input
-              type="checkbox"
-              checked={character.vantagensEspecialidade.ombroAmigo}
-              onChange={() => toggleCheckbox('vantagensEspecialidade.ombroAmigo')}
-            />
-            Ombro Amigo - Carisma (2 pontos)
-          </label>
-          <label className="vantagem-item">
-            <input
-              type="checkbox"
-              checked={character.vantagensEspecialidade.adrenalina}
-              onChange={() => toggleCheckbox('vantagensEspecialidade.adrenalina')}
-            />
-            Adrenalina - Vigor (2 pontos)
-          </label>
-          <label className="vantagem-item">
-            <input
-              type="checkbox"
-              checked={character.vantagensEspecialidade.cacarRecurso}
-              onChange={() => toggleCheckbox('vantagensEspecialidade.cacarRecurso')}
-            />
-            Caçar Recurso - Intelecto (3 pontos)
-          </label>
-          <label className="vantagem-item">
-            <input
-              type="checkbox"
-              checked={character.vantagensEspecialidade.prepararProxima}
-              onChange={() => toggleCheckbox('vantagensEspecialidade.prepararProxima')}
-            />
-            Preparar para a Próxima - Agilidade (3 pontos)
-          </label>
-          <label className="vantagem-item">
-            <input
-              type="checkbox"
-              checked={character.vantagensEspecialidade.naoEsperaPorMim}
-              onChange={() => toggleCheckbox('vantagensEspecialidade.naoEsperaPorMim')}
-            />
-            Ele Não Espera Por Mim - Força (3 pontos)
-          </label>
+          </div>
         </div>
       </div>
 
