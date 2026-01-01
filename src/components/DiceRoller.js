@@ -8,7 +8,12 @@ const PERICIAS = ['Agilidade', 'Astúcia', 'Força', 'Carisma', 'Vigor'];
 const DiceRoller = ({ user, character, updateCharacter }) => {
   const [numDados, setNumDados] = useState(1);
   const [periciaSelecionada, setPericiaSelecionada] = useState('');
+  const [isPericiaTreinada, setIsPericiaTreinada] = useState(false);
+  const [nomePersonagem, setNomePersonagem] = useState('');
   const [resultado, setResultado] = useState(null);
+  
+  // Modo mestre: não tem character definido
+  const isMasterMode = !character;
 
   const rolarDados = () => {
     if (!periciaSelecionada) {
@@ -16,11 +21,18 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
       return;
     }
 
-    // Verificar quantos dados estão disponíveis na pilha
-    const dadosDisponiveis = character.pilhaDados.filter(d => d).length;
-    if (numDados > dadosDisponiveis) {
-      alert(`Você só tem ${dadosDisponiveis} dados disponíveis na pilha!`);
+    if (isMasterMode && !nomePersonagem.trim()) {
+      alert('Digite o nome do personagem/criatura');
       return;
+    }
+
+    // Verificar quantos dados estão disponíveis na pilha (apenas para jogadores)
+    if (!isMasterMode) {
+      const dadosDisponiveis = character.pilhaDados.filter(d => d).length;
+      if (numDados > dadosDisponiveis) {
+        alert(`Você só tem ${dadosDisponiveis} dados disponíveis na pilha!`);
+        return;
+      }
     }
 
     // Rolar os dados
@@ -30,18 +42,18 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
     }
 
     // Verificar se a perícia é treinada
-    const isPericiaTreinada = character.pericias[periciaSelecionada]?.treinada || false;
-    const valorSucesso = isPericiaTreinada ? 3 : 4;
+    const treinada = isMasterMode ? isPericiaTreinada : (character.pericias[periciaSelecionada]?.treinada || false);
+    const valorSucesso = treinada ? 3 : 4;
 
     // Calcular sucessos
     const sucessos = resultadosDados.filter(dado => dado >= valorSucesso).length;
     const fracassos = resultadosDados.filter(dado => dado < valorSucesso).length;
 
     const resultadoRolagem = {
-      nomePersonagem: character.nome || 'Sem Nome',
-      nomeJogador: character.interprete || user.email || 'Jogador',
+      nomePersonagem: isMasterMode ? nomePersonagem : (character.nome || 'Sem Nome'),
+      nomeJogador: isMasterMode ? `Mestre: ${user.email || user.username || 'Mestre'}` : (character.interprete || user.email || 'Jogador'),
       pericia: periciaSelecionada,
-      treinada: isPericiaTreinada,
+      treinada: treinada,
       numDados,
       dados: resultadosDados,
       sucessos,
@@ -56,8 +68,8 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
     const rolagemRef = ref(database, `tables/${user.tableId}/rolls`);
     push(rolagemRef, resultadoRolagem);
 
-    // Se houve fracassos, remover dados da pilha
-    if (fracassos > 0) {
+    // Se houve fracassos, remover dados da pilha (apenas para jogadores)
+    if (!isMasterMode && fracassos > 0) {
       const novaPilha = [...character.pilhaDados];
       let dadosRemovidos = 0;
       
@@ -81,12 +93,25 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
       <h2>Sistema de Rolagem</h2>
       
       <div className="roller-controls">
+        {isMasterMode && (
+          <div className="control-group">
+            <label>Nome do Personagem/Criatura:</label>
+            <input
+              type="text"
+              value={nomePersonagem}
+              onChange={(e) => setNomePersonagem(e.target.value)}
+              placeholder="Ex: Zumbi, Cultista, etc"
+              className="dice-input"
+            />
+          </div>
+        )}
+
         <div className="control-group">
           <label>Quantidade de Dados:</label>
           <input
             type="number"
             min="1"
-            max="6"
+            max="10"
             value={numDados}
             onChange={(e) => setNumDados(parseInt(e.target.value) || 1)}
             className="dice-input"
@@ -101,13 +126,32 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
             className="pericia-select"
           >
             <option value="">Selecione...</option>
-            {PERICIAS.map(pericia => (
-              <option key={pericia} value={pericia}>
-                {pericia} {character.pericias[pericia]?.treinada ? '(Treinada)' : ''}
-              </option>
-            ))}
+            {PERICIAS.map(pericia => {
+              if (isMasterMode) {
+                return <option key={pericia} value={pericia}>{pericia}</option>;
+              } else {
+                return (
+                  <option key={pericia} value={pericia}>
+                    {pericia} {character.pericias[pericia]?.treinada ? '(Treinada)' : ''}
+                  </option>
+                );
+              }
+            })}
           </select>
         </div>
+
+        {isMasterMode && (
+          <div className="control-group">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={isPericiaTreinada}
+                onChange={(e) => setIsPericiaTreinada(e.target.checked)}
+              />
+              <span>Perícia Treinada (sucesso em 3+)</span>
+            </label>
+          </div>
+        )}
 
         <button onClick={rolarDados} className="roll-button">
           🎲 Rolar Dados
@@ -116,13 +160,19 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
 
       <div className="dice-info">
         <p>
-          <strong>Sucesso:</strong> {periciaSelecionada && character.pericias[periciaSelecionada]?.treinada 
-            ? '3 ou mais (Perícia Treinada)' 
-            : '4 ou mais (Sem Treino)'}
+          <strong>Sucesso:</strong> {
+            isMasterMode 
+              ? (isPericiaTreinada ? '3 ou mais (Perícia Treinada)' : '4 ou mais (Sem Treino)')
+              : (periciaSelecionada && character.pericias[periciaSelecionada]?.treinada 
+                  ? '3 ou mais (Perícia Treinada)' 
+                  : '4 ou mais (Sem Treino)')
+          }
         </p>
-        <p>
-          <strong>Dados Disponíveis:</strong> {character.pilhaDados.filter(d => d).length} / 6
-        </p>
+        {!isMasterMode && (
+          <p>
+            <strong>Dados Disponíveis:</strong> {character.pilhaDados.filter(d => d).length} / 6
+          </p>
+        )}
       </div>
 
       {resultado && (
@@ -153,9 +203,15 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
             </div>
           </div>
 
-          {resultado.fracassos > 0 && (
+          {resultado.fracassos > 0 && !isMasterMode && (
             <div className="warning-message">
               ⚠️ {resultado.fracassos} dado(s) removido(s) da pilha de dados!
+            </div>
+          )}
+
+          {resultado.fracassos > 0 && isMasterMode && (
+            <div className="info-message">
+              ℹ️ Como é uma rolagem do mestre, nenhum dado foi removido da pilha.
             </div>
           )}
         </div>
