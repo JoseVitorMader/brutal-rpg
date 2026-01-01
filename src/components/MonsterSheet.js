@@ -24,10 +24,12 @@ const MonsterSheet = ({ monster, onUpdate, onClose }) => {
   });
 
   const updateMonster = (updates) => {
-    const updated = { ...monsterData, ...updates };
-    setMonsterData(updated);
+    setMonsterData({ ...monsterData, ...updates });
+  };
+
+  const handleSave = () => {
     if (onUpdate) {
-      onUpdate(updated);
+      onUpdate(monsterData);
     }
   };
 
@@ -182,6 +184,12 @@ const MonsterSheet = ({ monster, onUpdate, onClose }) => {
               rows="3"
               placeholder="O que a criatura quer? Por que está aqui?"
             />
+          </div>
+
+          <div className="monster-actions">
+            <button className="save-monster-btn" onClick={handleSave}>
+              💾 Salvar Criatura
+            </button>
           </div>
         </div>
       </div>

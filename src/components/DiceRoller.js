@@ -5,11 +5,12 @@ import './DiceRoller.css';
 
 const PERICIAS = ['Agilidade', 'Astúcia', 'Força', 'Carisma', 'Vigor'];
 
-const DiceRoller = ({ user, character, updateCharacter }) => {
+const DiceRoller = ({ user, character, updateCharacter, monsters }) => {
   const [numDados, setNumDados] = useState(1);
   const [periciaSelecionada, setPericiaSelecionada] = useState('');
   const [isPericiaTreinada, setIsPericiaTreinada] = useState(false);
   const [nomePersonagem, setNomePersonagem] = useState('');
+  const [selectedMonster, setSelectedMonster] = useState(null);
   const [resultado, setResultado] = useState(null);
   
   // Modo mestre: não tem character definido
@@ -42,7 +43,12 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
     }
 
     // Verificar se a perícia é treinada
-    const treinada = isMasterMode ? isPericiaTreinada : (character.pericias[periciaSelecionada]?.treinada || false);
+    let treinada = false;
+    if (isMasterMode) {
+      treinada = selectedMonster ? (selectedMonster.pericias[periciaSelecionada]?.treinada || false) : isPericiaTreinada;
+    } else {
+      treinada = character.pericias[periciaSelecionada]?.treinada || false;
+    }
     const valorSucesso = treinada ? 3 : 4;
 
     // Calcular sucessos
@@ -50,7 +56,7 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
     const fracassos = resultadosDados.filter(dado => dado < valorSucesso).length;
 
     const resultadoRolagem = {
-      nomePersonagem: isMasterMode ? nomePersonagem : (character.nome || 'Sem Nome'),
+      nomePersonagem: isMasterMode ? (selectedMonster ? selectedMonster.nome : nomePersonagem) : (character.nome || 'Sem Nome'),
       nomeJogador: isMasterMode ? `Mestre: ${user.email || user.username || 'Mestre'}` : (character.interprete || user.email || 'Jogador'),
       pericia: periciaSelecionada,
       treinada: treinada,
@@ -93,7 +99,29 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
       <h2>Sistema de Rolagem</h2>
       
       <div className="roller-controls">
-        {isMasterMode && (
+        {isMasterMode && monsters && monsters.length > 0 && (
+          <div className="control-group">
+            <label>Selecionar Criatura:</label>
+            <select
+              value={selectedMonster ? selectedMonster.id : ''}
+              onChange={(e) => {
+                const monster = monsters.find(m => m.id === e.target.value);
+                setSelectedMonster(monster || null);
+                setNomePersonagem(monster ? monster.nome : '');
+              }}
+              className="pericia-select"
+            >
+              <option value="">-- Nova Rolagem --</option>
+              {monsters.map(monster => (
+                <option key={monster.id} value={monster.id}>
+                  {monster.nome}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {isMasterMode && !selectedMonster && (
           <div className="control-group">
             <label>Nome do Personagem/Criatura:</label>
             <input
@@ -140,7 +168,7 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
           </select>
         </div>
 
-        {isMasterMode && (
+        {isMasterMode && !selectedMonster && (
           <div className="control-group">
             <label className="checkbox-label">
               <input
@@ -162,7 +190,9 @@ const DiceRoller = ({ user, character, updateCharacter }) => {
         <p>
           <strong>Sucesso:</strong> {
             isMasterMode 
-              ? (isPericiaTreinada ? '3 ou mais (Perícia Treinada)' : '4 ou mais (Sem Treino)')
+              ? (selectedMonster && periciaSelecionada
+                  ? (selectedMonster.pericias[periciaSelecionada]?.treinada ? '3 ou mais (Perícia Treinada)' : '4 ou mais (Sem Treino)')
+                  : (isPericiaTreinada ? '3 ou mais (Perícia Treinada)' : '4 ou mais (Sem Treino)'))
               : (periciaSelecionada && character.pericias[periciaSelecionada]?.treinada 
                   ? '3 ou mais (Perícia Treinada)' 
                   : '4 ou mais (Sem Treino)')

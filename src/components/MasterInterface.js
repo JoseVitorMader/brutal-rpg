@@ -274,13 +274,16 @@ const MasterInterface = ({ user }) => {
         <p>⚠️ As rolagens aparecerão no histórico visível para todos os jogadores.</p>
       </div>
       <div className="master-dice-roller">
-        <DiceRoller user={{
-          tableId: user.tableId,
-          userId: user.userId,
-          email: user.email,
-          username: user.username,
-          role: 'master'
-        }} />
+        <DiceRoller 
+          user={{
+            tableId: user.tableId,
+            userId: user.userId,
+            email: user.email,
+            username: user.username,
+            role: 'master'
+          }} 
+          monsters={monsters}
+        />
       </div>
     </div>
   );
