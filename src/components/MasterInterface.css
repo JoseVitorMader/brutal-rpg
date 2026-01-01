@@ -30,15 +30,15 @@
 .table-info {
   display: flex;
   gap: 30px;
-  background: #16213e;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
   padding: 15px 25px;
   border-radius: 8px;
-  border: 2px solid #533483;
+  border: 2px solid #8B0000;
 }
 
 .table-info span {
   font-weight: bold;
-  color: #b8b8d1;
+  color: #e0e0e0;
 }
 
 .master-tabs {
@@ -88,16 +88,17 @@
 .rolls-panel h2,
 .characters-panel h2,
 .notes-panel h2 {
-  color: #e94560;
+  color: #ff6b6b;
   margin-top: 0;
   margin-bottom: 20px;
-  border-bottom: 2px solid #533483;
+  border-bottom: 2px solid #8B0000;
   padding-bottom: 10px;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
 }
 
 .empty-message {
   text-align: center;
-  color: #b8b8d1;
+  color: #e0e0e0;
   font-size: 18px;
   padding: 40px;
 }
@@ -220,37 +221,39 @@
 }
 
 .character-card {
-  background: #16213e;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
   padding: 20px;
   border-radius: 8px;
-  border: 2px solid #533483;
+  border: 2px solid #8B0000;
   cursor: pointer;
   transition: all 0.3s;
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.2);
 }
 
 .character-card:hover {
-  border-color: #e94560;
+  border-color: #a00000;
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(233, 69, 96, 0.3);
+  box-shadow: 0 8px 16px rgba(139, 0, 0, 0.5);
 }
 
 .character-card h3 {
-  color: #e94560;
+  color: #ff6b6b;
   margin-top: 0;
   margin-bottom: 15px;
-  border-bottom: 2px solid #533483;
+  border-bottom: 2px solid #8B0000;
   padding-bottom: 10px;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
 }
 
 .character-quick-info p {
   margin: 8px 0;
-  color: #b8b8d1;
+  color: #e0e0e0;
 }
 
 .resource-bars {
   margin-top: 15px;
   padding-top: 15px;
-  border-top: 1px solid #533483;
+  border-top: 1px solid #8B0000;
 }
 
 .resource-item {
@@ -258,13 +261,14 @@
   justify-content: space-between;
   margin: 8px 0;
   padding: 8px;
-  background: #1a1a2e;
+  background: #000;
   border-radius: 5px;
+  border: 1px solid #333;
 }
 
 .resource-count {
   font-weight: bold;
-  color: #e94560;
+  color: #ff6b6b;
 }
 
 /* Character Modal */
@@ -283,21 +287,22 @@
 }
 
 .modal-content {
-  background: #0f3460;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
   padding: 30px;
   border-radius: 15px;
   max-width: 1000px;
   max-height: 90vh;
   overflow-y: auto;
-  border: 3px solid #e94560;
+  border: 3px solid #8B0000;
   position: relative;
+  box-shadow: 0 0 40px rgba(139, 0, 0, 0.7);
 }
 
 .close-modal {
   position: absolute;
   top: 15px;
   right: 15px;
-  background: #e94560;
+  background: #8B0000;
   color: #fff;
   border: none;
   width: 40px;
@@ -309,15 +314,17 @@
 }
 
 .close-modal:hover {
-  background: #d63447;
+  background: #a00000;
   transform: rotate(90deg);
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.8);
 }
 
 .modal-content h2 {
-  color: #e94560;
+  color: #ff6b6b;
   margin-top: 0;
   margin-bottom: 20px;
   font-size: 28px;
+  text-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
 }
 
 .modal-grid {
@@ -327,39 +334,40 @@
 }
 
 .modal-section {
-  background: #16213e;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
   padding: 20px;
   border-radius: 8px;
-  border: 2px solid #533483;
+  border: 2px solid #8B0000;
 }
 
 .modal-section h3 {
-  color: #e94560;
+  color: #ff6b6b;
   margin-top: 0;
   margin-bottom: 15px;
-  border-bottom: 2px solid #533483;
+  border-bottom: 2px solid #8B0000;
   padding-bottom: 8px;
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
 }
 
 .modal-section p {
   margin: 10px 0;
-  color: #b8b8d1;
+  color: #e0e0e0;
   line-height: 1.6;
 }
 
 .character-image {
   max-width: 100%;
   border-radius: 8px;
-  border: 2px solid #533483;
+  border: 2px solid #8B0000;
 }
 
 /* Notes Panel */
 .master-notes {
   width: 100%;
   padding: 20px;
-  background: #16213e;
-  color: #fff;
-  border: 2px solid #533483;
+  background: #000;
+  color: #e0e0e0;
+  border: 2px solid #8B0000;
   border-radius: 8px;
   font-size: 16px;
   font-family: 'Courier New', monospace;
@@ -369,17 +377,17 @@
 
 .master-notes:focus {
   outline: none;
-  border-color: #e94560;
-  box-shadow: 0 0 10px rgba(233, 69, 96, 0.3);
+  border-color: #a00000;
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
 }
 
 .notes-info {
   margin-top: 15px;
   padding: 15px;
-  background: #16213e;
+  background: linear-gradient(135deg, #1a0000 0%, #0a0a0a 100%);
   border-radius: 8px;
-  border: 2px solid #533483;
-  color: #b8b8d1;
+  border: 2px solid #8B0000;
+  color: #e0e0e0;
 }
 
 /* Scrollbar */
@@ -390,28 +398,29 @@
 
 .rolls-list::-webkit-scrollbar-track,
 .modal-content::-webkit-scrollbar-track {
-  background: #16213e;
+  background: #000;
   border-radius: 5px;
 }
 
 .rolls-list::-webkit-scrollbar-thumb,
 .modal-content::-webkit-scrollbar-thumb {
-  background: #533483;
+  background: #8B0000;
   border-radius: 5px;
 }
 
 .rolls-list::-webkit-scrollbar-thumb:hover,
 .modal-content::-webkit-scrollbar-thumb:hover {
-  background: #e94560;
+  background: #a00000;
 }
 
 /* Monsters Panel */
 .monsters-panel h2 {
-  color: #e94560;
+  color: #ff6b6b;
   margin-top: 0;
   margin-bottom: 20px;
-  border-bottom: 2px solid #533483;
+  border-bottom: 2px solid #8B0000;
   padding-bottom: 10px;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
 }
 
 .monsters-header {
@@ -423,20 +432,21 @@
 
 .create-monster-btn {
   padding: 12px 25px;
-  background: #e94560;
+  background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
   color: #fff;
-  border: none;
+  border: 1px solid #a00000;
   border-radius: 8px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s;
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.4);
 }
 
 .create-monster-btn:hover {
-  background: #d63447;
+  background: linear-gradient(135deg, #a00000 0%, #8B0000 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+  box-shadow: 0 4px 20px rgba(139, 0, 0, 0.7);
 }
 
 .monsters-grid {
@@ -446,25 +456,27 @@
 }
 
 .monster-card {
-  background: #16213e;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
   padding: 20px;
   border-radius: 8px;
-  border: 2px solid #533483;
+  border: 2px solid #8B0000;
   cursor: pointer;
   transition: all 0.3s;
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.2);
 }
 
 .monster-card:hover {
-  border-color: #e94560;
+  border-color: #a00000;
   transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(233, 69, 96, 0.3);
+  box-shadow: 0 8px 16px rgba(139, 0, 0, 0.5);
 }
 
 .monster-card h3 {
-  color: #e94560;
+  color: #ff6b6b;
   margin: 0 0 15px 0;
-  border-bottom: 2px solid #533483;
+  border-bottom: 2px solid #8B0000;
   padding-bottom: 10px;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
 }
 
 .monster-mini-image {
@@ -473,7 +485,7 @@
   overflow: hidden;
   border-radius: 8px;
   margin-bottom: 15px;
-  border: 2px solid #533483;
+  border: 2px solid #8B0000;
 }
 
 .monster-mini-image img {
@@ -483,7 +495,7 @@
 }
 
 .monster-description {
-  color: #b8b8d1;
+  color: #e0e0e0;
   margin: 15px 0;
   line-height: 1.6;
   font-size: 14px;
@@ -493,9 +505,42 @@
   display: flex;
   justify-content: space-between;
   padding-top: 15px;
-  border-top: 1px solid #533483;
+  border-top: 1px solid #8B0000;
   font-weight: bold;
-  color: #e94560;
+  color: #ff6b6b;
   font-size: 14px;
 }
 
+/* Master Roll Panel */
+.master-roll-panel h2 {
+  color: #ff6b6b;
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #8B0000;
+  padding-bottom: 10px;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+}
+
+.master-roll-info {
+  background: linear-gradient(135deg, #1a0000 0%, #0a0a0a 100%);
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #8B0000;
+  margin-bottom: 25px;
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+}
+
+.master-roll-info p {
+  color: #e0e0e0;
+  margin: 10px 0;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.master-dice-roller {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  padding: 25px;
+  border-radius: 8px;
+  border: 2px solid #8B0000;
+  box-shadow: 0 0 25px rgba(139, 0, 0, 0.4);
+}

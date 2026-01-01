@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ref, onValue, set, push } from 'firebase/database';
 import { database } from '../firebase';
 import MonsterSheet from './MonsterSheet';
+import DiceRoller from './DiceRoller';
 import './MasterInterface.css';
 
 const MasterInterface = ({ user }) => {
@@ -9,7 +10,7 @@ const MasterInterface = ({ user }) => {
   const [rolls, setRolls] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [notes, setNotes] = useState('');
-  const [activeTab, setActiveTab] = useState('rolls'); // rolls, characters, notes, monsters
+  const [activeTab, setActiveTab] = useState('rolls'); // rolls, characters, notes, monsters, masterRoll
   const [monsters, setMonsters] = useState([]);
   const [selectedMonster, setSelectedMonster] = useState(null);
   const [showMonsterSheet, setShowMonsterSheet] = useState(false);
@@ -265,6 +266,25 @@ const MasterInterface = ({ user }) => {
     </div>
   );
 
+  const renderMasterRoll = () => (
+    <div className="master-roll-panel">
+      <h2>Rolagem do Mestre</h2>
+      <div className="master-roll-info">
+        <p>🎲 Use este espaço para fazer rolagens em nome de NPCs, criaturas ou testes secretos.</p>
+        <p>⚠️ As rolagens aparecerão no histórico visível para todos os jogadores.</p>
+      </div>
+      <div className="master-dice-roller">
+        <DiceRoller user={{
+          tableId: user.tableId,
+          userId: user.userId,
+          email: user.email,
+          username: user.username,
+          role: 'master'
+        }} />
+      </div>
+    </div>
+  );
+
   const renderMonsters = () => (
     <div className="monsters-panel">
       <div className="monsters-header">
@@ -315,7 +335,13 @@ const MasterInterface = ({ user }) => {
           className={`tab ${activeTab === 'rolls' ? 'active' : ''}`}
           onClick={() => setActiveTab('rolls')}
         >
-          🎲 Rolagens
+          📊 Histórico
+        </button>
+        <button 
+          className={`tab ${activeTab === 'masterRoll' ? 'active' : ''}`}
+          onClick={() => setActiveTab('masterRoll')}
+        >
+          🎲 Rolar Dados
         </button>
         <button 
           className={`tab ${activeTab === 'characters' ? 'active' : ''}`}
@@ -339,6 +365,7 @@ const MasterInterface = ({ user }) => {
 
       <div className="master-content">
         {activeTab === 'rolls' && renderRolls()}
+        {activeTab === 'masterRoll' && renderMasterRoll()}
         {activeTab === 'characters' && renderCharacters()}
         {activeTab === 'monsters' && renderMonsters()}
         {activeTab === 'notes' && renderNotes()}

@@ -162,7 +162,7 @@ const CharacterSheet = ({ user }) => {
               type="text"
               value={character.nome}
               onChange={(e) => updateCharacter({ nome: e.target.value })}
-              placeholder="Miguel de Andrade"
+              placeholder="Seu nome aqui"
               className="char-name-input"
             />
           </div>
@@ -172,7 +172,7 @@ const CharacterSheet = ({ user }) => {
               type="text"
               value={character.pronomes}
               onChange={(e) => updateCharacter({ pronomes: e.target.value })}
-              placeholder="Religioso"
+              placeholder=""
               className="char-origin-input"
             />
           </div>
@@ -205,44 +205,100 @@ const CharacterSheet = ({ user }) => {
         <div className="sheet-left-column">
           {/* Recursos Circulares */}
           <div className="resources-circle-section">
-            <div className="resource-circle dados-circle" onClick={() => {
-              const filled = character.pilhaDados.filter(d => d).length;
-              if (filled < 6) {
-                const newPilha = [...character.pilhaDados];
-                for (let i = 0; i < newPilha.length; i++) {
-                  if (!newPilha[i]) {
-                    newPilha[i] = true;
-                    updateCharacter({ pilhaDados: newPilha });
-                    break;
-                  }
-                }
-              }
-            }}>
-              <div className="circle-value">{character.pilhaDados.filter(d => d).length}</div>
-              <div className="circle-label">DADOS</div>
-              <div className="circle-max">/ 6</div>
+            <div className="resource-wrapper">
+              <div className="resource-circle dados-circle">
+                <div className="circle-value">{character.pilhaDados.filter(d => d).length}</div>
+                <div className="circle-label">DADOS</div>
+                <div className="circle-max">/ 6</div>
+              </div>
+              <div className="resource-controls">
+                <button 
+                  className="resource-btn decrease"
+                  onClick={() => {
+                    const filled = character.pilhaDados.filter(d => d).length;
+                    if (filled > 0) {
+                      const newPilha = [...character.pilhaDados];
+                      for (let i = newPilha.length - 1; i >= 0; i--) {
+                        if (newPilha[i]) {
+                          newPilha[i] = false;
+                          updateCharacter({ pilhaDados: newPilha });
+                          break;
+                        }
+                      }
+                    }
+                  }}
+                  title="Diminuir Dados"
+                >−</button>
+                <button 
+                  className="resource-btn increase"
+                  onClick={() => {
+                    const filled = character.pilhaDados.filter(d => d).length;
+                    if (filled < 6) {
+                      const newPilha = [...character.pilhaDados];
+                      for (let i = 0; i < newPilha.length; i++) {
+                        if (!newPilha[i]) {
+                          newPilha[i] = true;
+                          updateCharacter({ pilhaDados: newPilha });
+                          break;
+                        }
+                      }
+                    }
+                  }}
+                  title="Aumentar Dados"
+                >+</button>
+              </div>
             </div>
-            <div className="resource-circle fuga-circle" onClick={() => {
-              const filled = character.pilhaFuga.filter(d => d).length;
-              if (filled < 7) {
-                const newPilha = [...character.pilhaFuga];
-                for (let i = 0; i < newPilha.length; i++) {
-                  if (!newPilha[i]) {
-                    newPilha[i] = true;
-                    updateCharacter({ pilhaFuga: newPilha });
-                    break;
-                  }
-                }
-              }
-            }}>
-              <div className="circle-value">{character.pilhaFuga.filter(d => d).length}</div>
-              <div className="circle-label">FUGA</div>
-              <div className="circle-max">/ 7</div>
+            
+            <div className="resource-wrapper">
+              <div className="resource-circle fuga-circle">
+                <div className="circle-value">{character.pilhaFuga.filter(d => d).length}</div>
+                <div className="circle-label">FUGA</div>
+                <div className="circle-max">/ 7</div>
+              </div>
+              <div className="resource-controls">
+                <button 
+                  className="resource-btn decrease"
+                  onClick={() => {
+                    const filled = character.pilhaFuga.filter(d => d).length;
+                    if (filled > 0) {
+                      const newPilha = [...character.pilhaFuga];
+                      for (let i = newPilha.length - 1; i >= 0; i--) {
+                        if (newPilha[i]) {
+                          newPilha[i] = false;
+                          updateCharacter({ pilhaFuga: newPilha });
+                          break;
+                        }
+                      }
+                    }
+                  }}
+                  title="Diminuir Fuga"
+                >−</button>
+                <button 
+                  className="resource-btn increase"
+                  onClick={() => {
+                    const filled = character.pilhaFuga.filter(d => d).length;
+                    if (filled < 7) {
+                      const newPilha = [...character.pilhaFuga];
+                      for (let i = 0; i < newPilha.length; i++) {
+                        if (!newPilha[i]) {
+                          newPilha[i] = true;
+                          updateCharacter({ pilhaFuga: newPilha });
+                          break;
+                        }
+                      }
+                    }
+                  }}
+                  title="Aumentar Fuga"
+                >+</button>
+              </div>
             </div>
-            <div className="resource-circle tensao-circle">
-              <div className="circle-value">{character.tensao - calcularTensaoGasta()}</div>
-              <div className="circle-label">TENSÃO</div>
-              <div className="circle-max">/ {character.tensao}</div>
+            
+            <div className="resource-wrapper">
+              <div className="resource-circle tensao-circle">
+                <div className="circle-value">{character.tensao - calcularTensaoGasta()}</div>
+                <div className="circle-label">TENSÃO</div>
+                <div className="circle-max">/ {character.tensao}</div>
+              </div>
             </div>
           </div>
 

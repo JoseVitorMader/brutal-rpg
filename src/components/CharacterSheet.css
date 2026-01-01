@@ -164,6 +164,14 @@
   padding: 20px;
   border-radius: 6px;
   border: 1px solid #8B0000;
+  gap: 15px;
+}
+
+.resource-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .resource-circle {
@@ -178,14 +186,48 @@
   justify-content: center;
   position: relative;
   box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
-  cursor: pointer;
   transition: all 0.3s;
 }
 
-.resource-circle:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(139, 0, 0, 0.6);
-  border-width: 4px;
+.resource-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.resource-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: 2px solid #8B0000;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  color: #8B0000;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.resource-btn:hover {
+  background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.6);
+}
+
+.resource-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.4);
+}
+
+.resource-btn.decrease:hover {
+  background: linear-gradient(135deg, #666 0%, #444 100%);
+  color: #fff;
+  border-color: #888;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 .circle-value {
