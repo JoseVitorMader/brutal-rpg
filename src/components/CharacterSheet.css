@@ -1,0 +1,192 @@
+.character-sheet {
+  padding: 20px;
+  background: #1a1a2e;
+  color: #fff;
+  min-height: 100vh;
+}
+
+.sheet-header {
+  background: #0f3460;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sheet-header h1 {
+  color: #e94560;
+  margin: 0;
+}
+
+.tensao-display {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #16213e;
+  padding: 15px 25px;
+  border-radius: 8px;
+  border: 2px solid #533483;
+}
+
+.tensao-display label {
+  font-weight: bold;
+  color: #e94560;
+}
+
+.tensao-input {
+  width: 80px;
+  padding: 8px;
+  border: 2px solid #533483;
+  border-radius: 5px;
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.tensao-gasta {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.tensao-disponivel {
+  color: #51cf66;
+  font-weight: bold;
+}
+
+.sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.sheet-section {
+  background: #0f3460;
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px solid #533483;
+}
+
+.sheet-section h2 {
+  color: #e94560;
+  margin-top: 0;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #533483;
+  padding-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  color: #b8b8d1;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #533483;
+  border-radius: 5px;
+  background: #16213e;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #e94560;
+  box-shadow: 0 0 8px rgba(233, 69, 96, 0.3);
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #16213e;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.checkbox-item:hover {
+  background: #1f2f50;
+  border-color: #533483;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.pericia-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #16213e;
+  padding: 12px 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 2px solid #533483;
+}
+
+.pericia-name {
+  font-weight: bold;
+  color: #b8b8d1;
+}
+
+.appearance-preview {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.appearance-preview img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 10px;
+  border: 3px solid #533483;
+}
+
+.vantagem-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #16213e;
+  padding: 12px 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.vantagem-item:hover {
+  background: #1f2f50;
+  border-color: #533483;
+}
+
+.vantagem-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}

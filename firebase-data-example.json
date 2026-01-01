@@ -1,0 +1,86 @@
+{
+  "tables": {
+    "mesa_exemplo_001": {
+      "users": {
+        "mesa_exemplo_001_João": {
+          "username": "João",
+          "role": "player",
+          "tableId": "mesa_exemplo_001",
+          "createdAt": 1704096000000
+        },
+        "mesa_exemplo_001_Maria_Mestre": {
+          "username": "Maria",
+          "role": "master",
+          "tableId": "mesa_exemplo_001",
+          "createdAt": 1704096000000
+        }
+      },
+      "characters": {
+        "mesa_exemplo_001_João": {
+          "nome": "Marcus Shadow",
+          "pronomes": "ele/dele",
+          "interprete": "João",
+          "arquetipo": "Atleta",
+          "apegos": {
+            "itemIconico": "Uma bola de baseball manchada de sangue",
+            "relacaoAfetiva": "Meu irmão mais novo, que ainda está no colégio",
+            "desejoObscuro": "Descobrir quem matou meu melhor amigo"
+          },
+          "pilhaDados": [true, true, true, true, true, false],
+          "pilhaFuga": [true, true, false, false, false, false, false],
+          "marcadores": "Investigando o ginásio abandonado. Suspeita sobre o diretor.",
+          "ferida": {
+            "descricao": "Arranhões profundos nas costas durante a fuga do monstro",
+            "niveis": [true, true, false, false, false]
+          },
+          "pericias": {
+            "Agilidade": { "treinada": true },
+            "Astúcia": { "treinada": false },
+            "Força": { "treinada": true },
+            "Carisma": { "treinada": false },
+            "Vigor": { "treinada": false }
+          },
+          "habilidades": "Corrida rápida: Pode fazer uma ação extra de movimento por cena.\nInstinto defensivo: +1 em testes de esquiva.",
+          "aparencia": "https://example.com/character-image.jpg",
+          "tensao": 12,
+          "vantagensGerais": {
+            "choqueRealidade": true,
+            "cuidarFeridas": false,
+            "tomarJeito": true
+          },
+          "vantagensEspecialidade": {
+            "ombroAmigo": false,
+            "adrenalina": true,
+            "cacarRecurso": false,
+            "prepararProxima": true,
+            "naoEsperaPorMim": false
+          }
+        }
+      },
+      "rolls": {
+        "-NxK8s9dT2jL3mP4qR5v": {
+          "jogador": "Marcus Shadow",
+          "pericia": "Agilidade",
+          "treinada": true,
+          "numDados": 4,
+          "dados": [5, 3, 2, 6],
+          "sucessos": 3,
+          "fracassos": 1,
+          "valorSucesso": 3,
+          "timestamp": 1704096300000
+        },
+        "-NxK8tB7cD9eF1gH2iJ3": {
+          "jogador": "Marcus Shadow",
+          "pericia": "Força",
+          "treinada": true,
+          "numDados": 3,
+          "dados": [4, 5, 3],
+          "sucessos": 3,
+          "fracassos": 0,
+          "valorSucesso": 3,
+          "timestamp": 1704096450000
+        }
+      }
+    }
+  }
+}

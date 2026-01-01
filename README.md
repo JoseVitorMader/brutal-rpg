@@ -1,6 +1,169 @@
-# Getting Started with Create React App
+# BRUTAL RPG - Sistema de Fichas e Mestragem
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Sistema completo de RPG para o sistema BRUTAL, com fichas de personagens, sistema de rolagem de dados e interface para mestres, integrado com Firebase Realtime Database e Authentication.
+
+## 🎲 Funcionalidades
+
+### 🔐 Sistema de Autenticação
+- ✅ Cadastro de usuários com email e senha
+- ✅ Login seguro com Firebase Authentication
+- ✅ Recuperação de senha por email
+- ✅ Persistência automática de sessão
+- ✅ Gerenciamento de múltiplas mesas por usuário
+
+### 🎮 Sistema de Mesas
+- ✅ Criar mesas (criador = mestre automático)
+- ✅ Entrar em mesas existentes como jogador
+- ✅ Dashboard com "Minhas Mesas" e "Minhas Fichas"
+- ✅ Compartilhamento de mesa via ID único
+- ✅ Múltiplos personagens em diferentes mesas
+
+### Para Jogadores
+- ✅ Ficha de personagem completa com todos os campos do sistema BRUTAL
+- ✅ Sistema de arquétipos (Atleta, Cética, Esbelto, Heroi, Inocente, Nerd, Relaxado, Valentona)
+- ✅ Gestão de apegos (Item Icônico, Relação Afetiva, Desejo Obscuro)
+- ✅ Pilha de Dados (máximo 6) e Pilha de Fuga (7)
+- ✅ Sistema de perícias com treinamento (máximo 2 perícias treinadas)
+- ✅ Marcadores e Feridas
+- ✅ Vantagens Gerais e de Especialidade com sistema de tensão
+- ✅ Sistema de rolagem de dados d6
+  - Sucesso sem perícia treinada: 4 ou mais
+  - Sucesso com perícia treinada: 3 ou mais
+  - Dados perdidos em caso de fracasso
+
+### Para Mestres
+- ✅ Visualização de todas as rolagens em tempo real
+- ✅ Acesso completo às fichas de todos os jogadores
+- ✅ Sistema de anotações para a campanha
+- ✅ Interface organizada em abas (Rolagens, Fichas, Anotações)
+
+## 🚀 Configuração
+
+### 1. Configurar Firebase
+
+Edite o arquivo `src/firebase.js` e substitua as credenciais com as do seu projeto Firebase:
+
+```javascript
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_AUTH_DOMAIN",
+  databaseURL: "SUA_DATABASE_URL",
+  projectId: "SEU_PROJECT_ID",
+  storageBucket: "SEU_STORAGE_BUCKET",
+  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+  appId: "SEU_APP_ID"
+};
+```
+
+### 2. Criar projeto no Firebase
+
+1. Acesse [Firebase Console](https://console.firebase.google.com/)
+2. Crie um novo projeto
+3. Ative o **Realtime Database**
+4. Configure as regras de segurança (para desenvolvimento):
+
+```json
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+```
+
+**⚠️ IMPORTANTE:** Para produção, configure regras de segurança adequadas!
+
+### 3. Instalar dependências e executar
+
+```bash
+npm install
+npm start
+```
+
+## 📖 Como Usar
+
+### Cadastro e Login
+1. **Primeiro acesso**: Crie uma conta com email e senha
+2. **Login**: Entre com suas credenciais
+3. **Esqueceu a senha?**: Use a recuperação por email
+
+### Como Mestre
+1. **Dashboard → "Criar Mesa"**
+2. Dê um nome e descrição à sua campanha
+3. **Você será o mestre automaticamente**
+4. Copie o **ID da mesa** (clique no ID no card)
+5. Compartilhe o ID com seus jogadores
+6. Entre na mesa e comece a mestrar
+
+### Como Jogador
+1. **Peça o ID da mesa** ao seu mestre
+2. **Dashboard → "Entrar em Mesa"**
+3. Cole o ID recebido
+4. Entre na mesa como jogador
+5. Crie sua ficha de personagem
+6. Comece a jogar!
+
+### Dashboard
+- **Aba "Minhas Mesas"**: Veja todas as mesas que participa
+- **Aba "Minhas Fichas"**: Veja todos os personagens criados
+- **Navegação**: Alterne entre mesas facilmente
+
+## 🎨 Características do Sistema
+
+### Perícias
+- Agilidade
+- Astúcia
+- Força
+- Carisma
+- Vigor
+
+Cada perícia pode ser treinada (máximo 2 perícias). Perícias treinadas têm sucesso com 3+, sem treino precisam de 4+.
+
+### Vantagens Gerais
+- **Choque de Realidade** - 6 pontos de tensão
+- **Cuidar de Feridas** - 1 ponto de tensão
+- **Tomar Jeito** - 3 pontos de tensão
+
+### Vantagens de Especialidade
+- **Ombro Amigo** (Carisma) - 2 pontos
+- **Adrenalina** (Vigor) - 2 pontos
+- **Caçar Recurso** (Intelecto) - 3 pontos
+- **Preparar para a Próxima** (Agilidade) - 3 pontos
+- **Ele Não Espera Por Mim** (Força) - 3 pontos
+
+## 🔧 Tecnologias Utilizadas
+
+- React.js
+- Firebase Realtime Database
+- CSS personalizado com tema dark
+
+## 📝 Estrutura do Projeto
+
+```
+src/
+├── components/
+│   ├── Login.js / Login.css
+│   ├── CharacterSheet.js / CharacterSheet.css
+│   ├── DiceRoller.js / DiceRoller.css
+│   └── MasterInterface.js / MasterInterface.css
+├── firebase.js
+├── App.js
+└── index.js
+```
+
+## 🎯 Próximos Passos
+
+Para produção:
+1. Configure autenticação adequada no Firebase
+2. Implemente regras de segurança no Realtime Database
+3. Adicione validação de usuários
+4. Considere adicionar imagens de personagens via Firebase Storage
+5. Implemente sistema de backup das fichas
+
+---
+
+**Desenvolvido para o sistema de RPG BRUTAL** 🎲🔥
+
 
 ## Available Scripts
 
