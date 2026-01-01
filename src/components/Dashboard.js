@@ -8,9 +8,15 @@ const Dashboard = ({ user, onSelectTable, onLogout }) => {
   const [myCharacters, setMyCharacters] = useState([]);
   const [showCreateTable, setShowCreateTable] = useState(false);
   const [showJoinTable, setShowJoinTable] = useState(false);
+  const [showEditTable, setShowEditTable] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showTransferOwnership, setShowTransferOwnership] = useState(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(null);
   const [newTableName, setNewTableName] = useState('');
   const [newTableDescription, setNewTableDescription] = useState('');
   const [joinTableId, setJoinTableId] = useState('');
+  const [transferToUserId, setTransferToUserId] = useState('');
   const [activeTab, setActiveTab] = useState('tables'); // tables, characters
 
   useEffect(() => {
@@ -151,6 +157,108 @@ const Dashboard = ({ user, onSelectTable, onLogout }) => {
     alert('ID da mesa copiado! Compartilhe com seus jogadores.');
   };
 
+  const openEditTable = (table) => {
+    setSelectedTable(table);
+    setNewTableName(table.name);
+    setNewTableDescription(table.description || '');
+    setShowEditTable(true);
+  };
+
+  const editTable = async () => {
+    if (!newTableName.trim()) {
+      alert('Digite um nome para a mesa');
+      return;
+    }
+
+    try {
+      const tableRef = ref(database, `tables/${selectedTable.id}`);
+      await set(tableRef.child('name'), newTableName);
+      await set(tableRef.child('description'), newTableDescription);
+
+      setShowEditTable(false);
+      setNewTableName('');
+      setNewTableDescription('');
+      setSelectedTable(null);
+      alert('Mesa atualizada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao editar mesa:', error);
+      alert('Erro ao editar mesa');
+    }
+  };
+
+  const openDeleteConfirm = (table) => {
+    setSelectedTable(table);
+    setShowDeleteConfirm(true);
+  };
+
+  const deleteTable = async () => {
+    try {
+      const tableRef = ref(database, `tables/${selectedTable.id}`);
+      await set(tableRef, null);
+
+      setShowDeleteConfirm(false);
+      setSelectedTable(null);
+      alert('Mesa excluída com sucesso!');
+    } catch (error) {
+      console.error('Erro ao excluir mesa:', error);
+      alert('Erro ao excluir mesa');
+    }
+  };
+
+  const openTransferOwnership = (table) => {
+    setSelectedTable(table);
+    setTransferToUserId('');
+    setShowTransferOwnership(true);
+  };
+
+  const transferOwnership = async () => {
+    if (!transferToUserId) {
+      alert('Selecione um membro');
+      return;
+    }
+
+    try {
+      // Atualizar papel do novo mestre
+      await set(ref(database, `tables/${selectedTable.id}/members/${transferToUserId}/role`), 'master');
+      
+      // Atualizar papel do antigo mestre para jogador
+      await set(ref(database, `tables/${selectedTable.id}/members/${user.uid}/role`), 'player');
+      
+      // Atualizar createdBy
+      await set(ref(database, `tables/${selectedTable.id}/createdBy`), transferToUserId);
+
+      setShowTransferOwnership(false);
+      setSelectedTable(null);
+      setTransferToUserId('');
+      alert('Posse transferida com sucesso!');
+    } catch (error) {
+      console.error('Erro ao transferir posse:', error);
+      alert('Erro ao transferir posse');
+    }
+  };
+
+  const openLeaveConfirm = (table) => {
+    setSelectedTable(table);
+    setShowLeaveConfirm(true);
+  };
+
+  const leaveTable = async () => {
+    try {
+      // Remover membro da mesa
+      await set(ref(database, `tables/${selectedTable.id}/members/${user.uid}`), null);
+      
+      // Remover personagem se existir
+      await set(ref(database, `tables/${selectedTable.id}/characters/${user.uid}`), null);
+
+      setShowLeaveConfirm(false);
+      setSelectedTable(null);
+      alert('Você saiu da mesa');
+    } catch (error) {
+      console.error('Erro ao sair da mesa:', error);
+      alert('Erro ao sair da mesa');
+    }
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -212,9 +320,29 @@ const Dashboard = ({ user, onSelectTable, onLogout }) => {
                         📋 ID: {table.id.substring(0, 8)}...
                       </span>
                     </div>
-                    <button onClick={() => handleSelectTable(table)} className="enter-table-btn">
-                      Entrar na Mesa
-                    </button>
+                    <div className="table-actions">
+                      <button onClick={() => handleSelectTable(table)} className="enter-table-btn">
+                        Entrar na Mesa
+                      </button>
+                      {table.role === 'master' && (
+                        <div className="table-management">
+                          <button onClick={() => openEditTable(table)} className="mgmt-btn edit" title="Editar Mesa">
+                            ✏️
+                          </button>
+                          <button onClick={() => openTransferOwnership(table)} className="mgmt-btn transfer" title="Transferir Posse">
+                            👑
+                          </button>
+                          <button onClick={() => openDeleteConfirm(table)} className="mgmt-btn delete" title="Excluir Mesa">
+                            🗑️
+                          </button>
+                        </div>
+                      )}
+                      {table.role === 'player' && (
+                        <button onClick={() => openLeaveConfirm(table)} className="leave-table-btn" title="Sair da Mesa">
+                          🚪 Sair
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -292,6 +420,138 @@ const Dashboard = ({ user, onSelectTable, onLogout }) => {
                 </button>
                 <button onClick={createTable} className="confirm-btn">
                   Criar Mesa
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Editar Mesa */}
+      {showEditTable && (
+        <div className="modal-overlay" onClick={() => setShowEditTable(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>Editar Mesa</h2>
+            <div className="modal-form">
+              <div className="form-group">
+                <label>Nome da Mesa *</label>
+                <input
+                  type="text"
+                  value={newTableName}
+                  onChange={(e) => setNewTableName(e.target.value)}
+                  placeholder="Ex: Campanha de Terror"
+                />
+              </div>
+              <div className="form-group">
+                <label>Descrição</label>
+                <textarea
+                  value={newTableDescription}
+                  onChange={(e) => setNewTableDescription(e.target.value)}
+                  placeholder="Descreva sua campanha..."
+                  rows="4"
+                />
+              </div>
+              <div className="modal-actions">
+                <button onClick={() => setShowEditTable(false)} className="cancel-btn">
+                  Cancelar
+                </button>
+                <button onClick={editTable} className="confirm-btn">
+                  Salvar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Excluir Mesa */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>⚠️ Excluir Mesa</h2>
+            <div className="modal-form">
+              <p className="modal-warning">
+                Tem certeza que deseja excluir a mesa <strong>{selectedTable?.name}</strong>?
+              </p>
+              <p className="modal-warning">
+                ⚠️ Esta ação não pode ser desfeita! Todos os personagens e dados da mesa serão perdidos.
+              </p>
+              <div className="modal-actions">
+                <button onClick={() => setShowDeleteConfirm(false)} className="cancel-btn">
+                  Cancelar
+                </button>
+                <button onClick={deleteTable} className="delete-confirm-btn">
+                  Excluir Mesa
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Transferir Posse */}
+      {showTransferOwnership && (
+        <div className="modal-overlay" onClick={() => setShowTransferOwnership(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>👑 Transferir Posse da Mesa</h2>
+            <div className="modal-form">
+              <div className="form-group">
+                <label>Selecione o Novo Mestre *</label>
+                <select
+                  value={transferToUserId}
+                  onChange={(e) => setTransferToUserId(e.target.value)}
+                  className="member-select"
+                >
+                  <option value="">-- Selecione um membro --</option>
+                  {selectedTable && Object.entries(selectedTable.members || {}).map(([uid, member]) => {
+                    if (uid !== user.uid) {
+                      return (
+                        <option key={uid} value={uid}>
+                          {member.displayName} ({member.role === 'master' ? 'Mestre' : 'Jogador'})
+                        </option>
+                      );
+                    }
+                    return null;
+                  })}
+                </select>
+              </div>
+              <p className="modal-info">
+                👑 O membro selecionado se tornará o novo mestre da mesa.
+              </p>
+              <p className="modal-info">
+                🎭 Você será rebaixado para jogador.
+              </p>
+              <div className="modal-actions">
+                <button onClick={() => setShowTransferOwnership(false)} className="cancel-btn">
+                  Cancelar
+                </button>
+                <button onClick={transferOwnership} className="confirm-btn">
+                  Transferir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Sair da Mesa */}
+      {showLeaveConfirm && (
+        <div className="modal-overlay" onClick={() => setShowLeaveConfirm(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>🚪 Sair da Mesa</h2>
+            <div className="modal-form">
+              <p className="modal-warning">
+                Tem certeza que deseja sair da mesa <strong>{selectedTable?.name}</strong>?
+              </p>
+              <p className="modal-warning">
+                ⚠️ Seu personagem será removido e você não poderá mais acessar esta mesa.
+              </p>
+              <div className="modal-actions">
+                <button onClick={() => setShowLeaveConfirm(false)} className="cancel-btn">
+                  Cancelar
+                </button>
+                <button onClick={leaveTable} className="delete-confirm-btn">
+                  Sair da Mesa
                 </button>
               </div>
             </div>

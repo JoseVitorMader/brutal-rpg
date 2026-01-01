@@ -167,7 +167,7 @@ const CharacterSheet = ({ user }) => {
             />
           </div>
           <div className="char-origin-group">
-            <label>ORIGEM</label>
+            <label>PRONOMES</label>
             <input
               type="text"
               value={character.pronomes}
@@ -186,13 +186,12 @@ const CharacterSheet = ({ user }) => {
             onChange={(e) => updateCharacter({ interprete: e.target.value })}
             className="char-jogador-input"
           />
-          <label>CLASSE</label>
+          <label>ARQUÉTIPOS</label>
           <select
             value={character.arquetipo}
             onChange={(e) => updateCharacter({ arquetipo: e.target.value })}
             className="char-class-input"
           >
-            <option value="">ESP. TÉCNICO</option>
             {ARQUETIPOS.map(arq => (
               <option key={arq} value={arq}>{arq}</option>
             ))}
@@ -291,10 +290,6 @@ const CharacterSheet = ({ user }) => {
           {/* Abas Superiores */}
           <div className="sheet-tabs">
             <button className="tab-btn active">COMBATE</button>
-            <button className="tab-btn">HABILIDADES</button>
-            <button className="tab-btn">RITUAIS</button>
-            <button className="tab-btn">INVENTÁRIO</button>
-            <button className="tab-btn">DESCRIÇÃO</button>
           </div>
 
           {/* Área de Apegos */}
