@@ -399,7 +399,7 @@ const MasterInterface = ({ user }) => {
     <div className="master-roll-panel">
       <h2>Rolagem do Mestre</h2>
       <div className="master-roll-info">
-        <p>🎲 Use este espaço para fazer rolagens em nome de NPCs, criaturas ou testes secretos.</p>
+        <p>🎲 Use este espaço para fazer rolagens em nome de NPCs, Killers ou testes secretos.</p>
         <p>⚠️ As rolagens aparecerão no histórico visível para todos os jogadores.</p>
       </div>
       <div className="master-dice-roller">
@@ -420,13 +420,13 @@ const MasterInterface = ({ user }) => {
   const renderMonsters = () => (
     <div className="monsters-panel">
       <div className="monsters-header">
-        <h2>Criaturas e NPCs</h2>
+        <h2>Killers</h2>
         <button onClick={createMonster} className="create-monster-btn">
-          + Nova Criatura
+          + Novo Killer
         </button>
       </div>
       {monsters.length === 0 ? (
-        <p className="empty-message">Nenhuma criatura criada ainda</p>
+        <p className="empty-message">Nenhum Killer criado ainda</p>
       ) : (
         <div className="monsters-grid">
           {monsters.map(monster => (
@@ -485,7 +485,7 @@ const MasterInterface = ({ user }) => {
           className={`tab ${activeTab === 'monsters' ? 'active' : ''}`}
           onClick={() => setActiveTab('monsters')}
         >
-          👹 Criaturas
+          👹 Killers
         </button>
         <button 
           className={`tab ${activeTab === 'notes' ? 'active' : ''}`}
