@@ -112,6 +112,80 @@ const MasterInterface = ({ user }) => {
     setShowMonsterSheet(true);
   };
 
+  const updateCharacterResource = (charId, resourcePath, newValue) => {
+    const characterRef = ref(database, `tables/${user.tableId}/characters/${charId}/${resourcePath}`);
+    set(characterRef, newValue);
+  };
+
+  const adjustCharacterDados = (charId, currentPilha, increase) => {
+    const newPilha = [...currentPilha];
+    const filled = newPilha.filter(d => d).length;
+
+    if (increase && filled < 6) {
+      for (let i = 0; i < newPilha.length; i++) {
+        if (!newPilha[i]) {
+          newPilha[i] = true;
+          break;
+        }
+      }
+    } else if (!increase && filled > 0) {
+      for (let i = newPilha.length - 1; i >= 0; i--) {
+        if (newPilha[i]) {
+          newPilha[i] = false;
+          break;
+        }
+      }
+    }
+
+    updateCharacterResource(charId, 'pilhaDados', newPilha);
+  };
+
+  const adjustCharacterFuga = (charId, currentPilha, increase) => {
+    const newPilha = [...currentPilha];
+    const filled = newPilha.filter(d => d).length;
+
+    if (increase && filled < 7) {
+      for (let i = 0; i < newPilha.length; i++) {
+        if (!newPilha[i]) {
+          newPilha[i] = true;
+          break;
+        }
+      }
+    } else if (!increase && filled > 0) {
+      for (let i = newPilha.length - 1; i >= 0; i--) {
+        if (newPilha[i]) {
+          newPilha[i] = false;
+          break;
+        }
+      }
+    }
+
+    updateCharacterResource(charId, 'pilhaFuga', newPilha);
+  };
+
+  const adjustCharacterFerida = (charId, currentFerida, increase) => {
+    const newNiveis = [...currentFerida.niveis];
+    const filled = newNiveis.filter(d => d).length;
+
+    if (increase && filled < 5) {
+      for (let i = 0; i < newNiveis.length; i++) {
+        if (!newNiveis[i]) {
+          newNiveis[i] = true;
+          break;
+        }
+      }
+    } else if (!increase && filled > 0) {
+      for (let i = newNiveis.length - 1; i >= 0; i--) {
+        if (newNiveis[i]) {
+          newNiveis[i] = false;
+          break;
+        }
+      }
+    }
+
+    updateCharacterResource(charId, 'ferida', { ...currentFerida, niveis: newNiveis });
+  };
+
   const renderRolls = () => (
     <div className="rolls-panel">
       <h2>Histórico de Rolagens</h2>
@@ -222,9 +296,64 @@ const MasterInterface = ({ user }) => {
 
               <div className="modal-section">
                 <h3>Recursos</h3>
-                <p><strong>Pilha de Dados:</strong> {selectedCharacter.pilhaDados?.filter(d => d).length || 0} / 6</p>
-                <p><strong>Pilha de Fuga:</strong> {selectedCharacter.pilhaFuga?.filter(d => d).length || 0} / 7</p>
-                <p><strong>Ferida:</strong> {selectedCharacter.ferida?.niveis?.filter(d => d).length || 0} / 5</p>
+                <div className="master-resource-control">
+                  <div className="resource-control-row">
+                    <label>Pilha de Dados:</label>
+                    <div className="resource-controls-inline">
+                      <button 
+                        className="resource-btn-master decrease"
+                        onClick={() => adjustCharacterDados(selectedCharacter.id, selectedCharacter.pilhaDados || Array(6).fill(false), false)}
+                        title="Diminuir Dados"
+                      >−</button>
+                      <span className="resource-value">
+                        {selectedCharacter.pilhaDados?.filter(d => d).length || 0} / 6
+                      </span>
+                      <button 
+                        className="resource-btn-master increase"
+                        onClick={() => adjustCharacterDados(selectedCharacter.id, selectedCharacter.pilhaDados || Array(6).fill(false), true)}
+                        title="Aumentar Dados"
+                      >+</button>
+                    </div>
+                  </div>
+                  
+                  <div className="resource-control-row">
+                    <label>Pilha de Fuga:</label>
+                    <div className="resource-controls-inline">
+                      <button 
+                        className="resource-btn-master decrease"
+                        onClick={() => adjustCharacterFuga(selectedCharacter.id, selectedCharacter.pilhaFuga || Array(7).fill(false), false)}
+                        title="Diminuir Fuga"
+                      >−</button>
+                      <span className="resource-value">
+                        {selectedCharacter.pilhaFuga?.filter(d => d).length || 0} / 7
+                      </span>
+                      <button 
+                        className="resource-btn-master increase"
+                        onClick={() => adjustCharacterFuga(selectedCharacter.id, selectedCharacter.pilhaFuga || Array(7).fill(false), true)}
+                        title="Aumentar Fuga"
+                      >+</button>
+                    </div>
+                  </div>
+                  
+                  <div className="resource-control-row">
+                    <label>Ferida:</label>
+                    <div className="resource-controls-inline">
+                      <button 
+                        className="resource-btn-master decrease"
+                        onClick={() => adjustCharacterFerida(selectedCharacter.id, selectedCharacter.ferida || { niveis: Array(5).fill(false), descricao: '' }, false)}
+                        title="Diminuir Ferida"
+                      >−</button>
+                      <span className="resource-value">
+                        {selectedCharacter.ferida?.niveis?.filter(d => d).length || 0} / 5
+                      </span>
+                      <button 
+                        className="resource-btn-master increase"
+                        onClick={() => adjustCharacterFerida(selectedCharacter.id, selectedCharacter.ferida || { niveis: Array(5).fill(false), descricao: '' }, true)}
+                        title="Aumentar Ferida"
+                      >+</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="modal-section">

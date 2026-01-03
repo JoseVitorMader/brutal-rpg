@@ -4,8 +4,23 @@ import { database } from '../firebase';
 import DiceRoller from './DiceRoller';
 import './CharacterSheet.css';
 
-const ARQUETIPOS = ['Atleta', 'Cética', 'Esbelto', 'Heroi', 'Inocente', 'Nerd', 'Relaxado', 'Valentona'];
+const ARQUETIPOS = ['Selecione o Arquetipo', 'Atleta', 'Cética', 'Esbelto', 'Heroi', 'Inocente', 'Nerd', 'Relaxado', 'Valentona'];
 const PERICIAS = ['Agilidade', 'Astúcia', 'Força', 'Carisma', 'Vigor'];
+
+const VANTAGENS = {
+  gerais: [
+    { id: 'choqueRealidade', nome: 'Choque de Realidade', custo: 6 },
+    { id: 'cuidarFeridas', nome: 'Cuidar de Feridas', custo: 1 },
+    { id: 'tomarJeito', nome: 'Tomar Jeito', custo: 3 }
+  ],
+  especialidade: [
+    { id: 'ombroAmigo', nome: 'Ombro Amigo', custo: 2 },
+    { id: 'adrenalina', nome: 'Adrenalina', custo: 2 },
+    { id: 'cacarRecurso', nome: 'Caçar Recurso', custo: 3 },
+    { id: 'prepararProxima', nome: 'Preparar Próxima', custo: 3 },
+    { id: 'naoEsperaPorMim', nome: 'Não Espera Por Mim', custo: 3 }
+  ]
+};
 
 const CharacterSheet = ({ user }) => {
   const [character, setCharacter] = useState({
@@ -35,17 +50,9 @@ const CharacterSheet = ({ user }) => {
     habilidades: '',
     aparencia: '',
     tensao: 0,
-    vantagensGerais: {
-      choqueRealidade: false,
-      cuidarFeridas: false,
-      tomarJeito: false
-    },
-    vantagensEspecialidade: {
-      ombroAmigo: false,
-      adrenalina: false,
-      cacarRecurso: false,
-      prepararProxima: false,
-      naoEsperaPorMim: false
+    inventarioVantagens: {
+      compradas: [],
+      usadas: []
     }
   });
 
@@ -106,16 +113,71 @@ const CharacterSheet = ({ user }) => {
   };
 
   const calcularTensaoGasta = () => {
-    let total = 0;
-    if (character.vantagensGerais.choqueRealidade) total += 6;
-    if (character.vantagensGerais.cuidarFeridas) total += 1;
-    if (character.vantagensGerais.tomarJeito) total += 3;
-    if (character.vantagensEspecialidade.ombroAmigo) total += 2;
-    if (character.vantagensEspecialidade.adrenalina) total += 2;
-    if (character.vantagensEspecialidade.cacarRecurso) total += 3;
-    if (character.vantagensEspecialidade.prepararProxima) total += 3;
-    if (character.vantagensEspecialidade.naoEsperaPorMim) total += 3;
-    return total;
+    if (!character.inventarioVantagens) return 0;
+    
+    const todasVantagens = [...VANTAGENS.gerais, ...VANTAGENS.especialidade];
+    const compradas = character.inventarioVantagens.compradas || [];
+    
+    return compradas.reduce((total, vantagemId) => {
+      const vantagem = todasVantagens.find(v => v.id === vantagemId);
+      return total + (vantagem ? vantagem.custo : 0);
+    }, 0);
+  };
+
+  const comprarVantagem = (vantagemId) => {
+    const todasVantagens = [...VANTAGENS.gerais, ...VANTAGENS.especialidade];
+    const vantagem = todasVantagens.find(v => v.id === vantagemId);
+    
+    if (!vantagem) return;
+    
+    const tensaoDisponivel = character.tensao - calcularTensaoGasta();
+    
+    if (tensaoDisponivel < vantagem.custo) {
+      alert(`Tensão insuficiente! Você precisa de ${vantagem.custo} pontos, mas tem apenas ${tensaoDisponivel} disponíveis.`);
+      return;
+    }
+    
+    const novasCompradas = [...(character.inventarioVantagens.compradas || []), vantagemId];
+    updateCharacter({
+      inventarioVantagens: {
+        ...character.inventarioVantagens,
+        compradas: novasCompradas
+      }
+    });
+  };
+
+  const desfazerCompra = (vantagemId) => {
+    const novasCompradas = (character.inventarioVantagens.compradas || []).filter(id => id !== vantagemId);
+    updateCharacter({
+      inventarioVantagens: {
+        ...character.inventarioVantagens,
+        compradas: novasCompradas
+      }
+    });
+  };
+
+  const usarVantagem = (vantagemId) => {
+    const novasCompradas = (character.inventarioVantagens.compradas || []).filter(id => id !== vantagemId);
+    const novasUsadas = [...(character.inventarioVantagens.usadas || []), { id: vantagemId, timestamp: Date.now() }];
+    
+    updateCharacter({
+      inventarioVantagens: {
+        compradas: novasCompradas,
+        usadas: novasUsadas
+      }
+    });
+  };
+
+  const cancelarUso = (vantagemId) => {
+    const novasUsadas = (character.inventarioVantagens.usadas || []).filter(item => item.id !== vantagemId);
+    const novasCompradas = [...(character.inventarioVantagens.compradas || []), vantagemId];
+    
+    updateCharacter({
+      inventarioVantagens: {
+        compradas: novasCompradas,
+        usadas: novasUsadas
+      }
+    });
   };
 
   const handleImageUpload = (e) => {
@@ -339,6 +401,15 @@ const CharacterSheet = ({ user }) => {
               ))}
             </div>
           </div>
+
+          {/* DiceRoller Compacto */}
+          <div className="dice-roller-compact">
+            <DiceRoller 
+              user={user} 
+              character={character} 
+              updateCharacter={updateCharacter}
+            />
+          </div>
         </div>
 
         {/* Coluna Direita - Combate, Habilidades, etc */}
@@ -382,78 +453,126 @@ const CharacterSheet = ({ user }) => {
             </div>
           </div>
 
-          {/* Vantagens */}
-          <div className="vantagens-compact">
-            <h3>VANTAGENS GERAIS</h3>
-            <div className="vantagens-list">
-              <label className="vantagem-checkbox">
-                <input
-                  type="checkbox"
-                  checked={character.vantagensGerais.choqueRealidade}
-                  onChange={() => toggleCheckbox('vantagensGerais.choqueRealidade')}
-                />
-                <span>Choque de Realidade (6)</span>
-              </label>
-              <label className="vantagem-checkbox">
-                <input
-                  type="checkbox"
-                  checked={character.vantagensGerais.cuidarFeridas}
-                  onChange={() => toggleCheckbox('vantagensGerais.cuidarFeridas')}
-                />
-                <span>Cuidar de Feridas (1)</span>
-              </label>
-              <label className="vantagem-checkbox">
-                <input
-                  type="checkbox"
-                  checked={character.vantagensGerais.tomarJeito}
-                  onChange={() => toggleCheckbox('vantagensGerais.tomarJeito')}
-                />
-                <span>Tomar Jeito (3)</span>
-              </label>
-            </div>
+          {/* Sistema de Vantagens com Inventário */}
+          <div className="vantagens-system">
+            <h3>🛒 LOJA DE VANTAGENS</h3>
             
-            <h3>VANTAGENS DE ESPECIALIDADE</h3>
-            <div className="vantagens-list">
-              <label className="vantagem-checkbox">
-                <input
-                  type="checkbox"
-                  checked={character.vantagensEspecialidade.ombroAmigo}
-                  onChange={() => toggleCheckbox('vantagensEspecialidade.ombroAmigo')}
-                />
-                <span>Ombro Amigo (2)</span>
-              </label>
-              <label className="vantagem-checkbox">
-                <input
-                  type="checkbox"
-                  checked={character.vantagensEspecialidade.adrenalina}
-                  onChange={() => toggleCheckbox('vantagensEspecialidade.adrenalina')}
-                />
-                <span>Adrenalina (2)</span>
-              </label>
-              <label className="vantagem-checkbox">
-                <input
-                  type="checkbox"
-                  checked={character.vantagensEspecialidade.cacarRecurso}
-                  onChange={() => toggleCheckbox('vantagensEspecialidade.cacarRecurso')}
-                />
-                <span>Caçar Recurso (3)</span>
-              </label>
-              <label className="vantagem-checkbox">
-                <input
-                  type="checkbox"
-                  checked={character.vantagensEspecialidade.prepararProxima}
-                  onChange={() => toggleCheckbox('vantagensEspecialidade.prepararProxima')}
-                />
-                <span>Preparar Próxima (3)</span>
-              </label>
-              <label className="vantagem-checkbox">
-                <input
-                  type="checkbox"
-                  checked={character.vantagensEspecialidade.naoEsperaPorMim}
-                  onChange={() => toggleCheckbox('vantagensEspecialidade.naoEsperaPorMim')}
-                />
-                <span>Não Espera Por Mim (3)</span>
-              </label>
+            <div className="vantagens-categoria">
+              <h4>Vantagens Gerais</h4>
+              {VANTAGENS.gerais.map(vantagem => {
+                const jaComprada = (character.inventarioVantagens?.compradas || []).includes(vantagem.id);
+                const tensaoDisponivel = character.tensao - calcularTensaoGasta();
+                const podeComprar = !jaComprada && tensaoDisponivel >= vantagem.custo;
+                
+                return (
+                  <div key={vantagem.id} className={`vantagem-loja-item ${jaComprada ? 'comprada' : ''}`}>
+                    <span className="vantagem-nome">{vantagem.nome}</span>
+                    <span className="vantagem-custo">({vantagem.custo} tensão)</span>
+                    {!jaComprada ? (
+                      <button 
+                        onClick={() => comprarVantagem(vantagem.id)}
+                        disabled={!podeComprar}
+                        className="btn-comprar"
+                        title={!podeComprar ? 'Tensão insuficiente' : 'Comprar vantagem'}
+                      >
+                        🛒 Comprar
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => desfazerCompra(vantagem.id)}
+                        className="btn-desfazer"
+                      >
+                        ↩️ Desfazer
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="vantagens-categoria">
+              <h4>Vantagens de Especialidade</h4>
+              {VANTAGENS.especialidade.map(vantagem => {
+                const jaComprada = (character.inventarioVantagens?.compradas || []).includes(vantagem.id);
+                const tensaoDisponivel = character.tensao - calcularTensaoGasta();
+                const podeComprar = !jaComprada && tensaoDisponivel >= vantagem.custo;
+                
+                return (
+                  <div key={vantagem.id} className={`vantagem-loja-item ${jaComprada ? 'comprada' : ''}`}>
+                    <span className="vantagem-nome">{vantagem.nome}</span>
+                    <span className="vantagem-custo">({vantagem.custo} tensão)</span>
+                    {!jaComprada ? (
+                      <button 
+                        onClick={() => comprarVantagem(vantagem.id)}
+                        disabled={!podeComprar}
+                        className="btn-comprar"
+                        title={!podeComprar ? 'Tensão insuficiente' : 'Comprar vantagem'}
+                      >
+                        🛒 Comprar
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => desfazerCompra(vantagem.id)}
+                        className="btn-desfazer"
+                      >
+                        ↩️ Desfazer
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            <h3>📦 INVENTÁRIO (Vantagens Compradas)</h3>
+            <div className="inventario-vantagens">
+              {(!character.inventarioVantagens?.compradas || character.inventarioVantagens.compradas.length === 0) ? (
+                <p className="inventario-vazio">Nenhuma vantagem comprada ainda</p>
+              ) : (
+                character.inventarioVantagens.compradas.map(vantagemId => {
+                  const todasVantagens = [...VANTAGENS.gerais, ...VANTAGENS.especialidade];
+                  const vantagem = todasVantagens.find(v => v.id === vantagemId);
+                  if (!vantagem) return null;
+                  
+                  return (
+                    <div key={vantagemId} className="vantagem-inventario-item">
+                      <span className="vantagem-nome">{vantagem.nome}</span>
+                      <button 
+                        onClick={() => usarVantagem(vantagemId)}
+                        className="btn-usar"
+                        title="Usar esta vantagem"
+                      >
+                        ✓ Usar
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            <h3>✅ VANTAGENS USADAS</h3>
+            <div className="vantagens-usadas">
+              {(!character.inventarioVantagens?.usadas || character.inventarioVantagens.usadas.length === 0) ? (
+                <p className="inventario-vazio">Nenhuma vantagem usada ainda</p>
+              ) : (
+                character.inventarioVantagens.usadas.map((item, index) => {
+                  const todasVantagens = [...VANTAGENS.gerais, ...VANTAGENS.especialidade];
+                  const vantagem = todasVantagens.find(v => v.id === item.id);
+                  if (!vantagem) return null;
+                  
+                  return (
+                    <div key={index} className="vantagem-usada-item">
+                      <span className="vantagem-nome">{vantagem.nome}</span>
+                      <button 
+                        onClick={() => cancelarUso(item.id)}
+                        className="btn-cancelar"
+                        title="Cancelar uso (erro)"
+                      >
+                        ↩️ Cancelar
+                      </button>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 
@@ -492,13 +611,6 @@ const CharacterSheet = ({ user }) => {
           </div>
         </div>
       </div>
-
-      {/* Sistema de Rolagem */}
-      <DiceRoller 
-        user={user} 
-        character={character}
-        updateCharacter={updateCharacter}
-      />
     </div>
   );
 };
