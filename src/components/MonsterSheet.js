@@ -4,6 +4,7 @@ import './MonsterSheet.css';
 const MonsterSheet = ({ monster, onUpdate, onClose }) => {
   const [monsterData, setMonsterData] = useState(monster || {
     nome: '',
+    descricao: '',
     ameacas: '',
     pontosHorror: 0,
     nivelBrutalidade: '',
@@ -23,6 +24,7 @@ const MonsterSheet = ({ monster, onUpdate, onClose }) => {
     if (monster) {
       setMonsterData({
         nome: monster.nome || '',
+        descricao: monster.descricao || '',
         ameacas: monster.ameacas || '',
         pontosHorror: monster.pontosHorror || 0,
         nivelBrutalidade: monster.nivelBrutalidade || '',
@@ -134,14 +136,14 @@ const MonsterSheet = ({ monster, onUpdate, onClose }) => {
                 placeholder="Nome da criatura"
               />
             </div>
-            
+
             <div className="monster-field">
-              <label>AMEAÇAS</label>
-              <textarea
-                value={monsterData.ameacas}
-                onChange={(e) => updateMonster({ ameacas: e.target.value })}
-                rows="2"
-                placeholder="Descreva as ameaças..."
+              <label>DESCRIÇÃO RÁPIDA</label>
+              <input
+                type="text"
+                value={monsterData.descricao}
+                onChange={(e) => updateMonster({ descricao: e.target.value })}
+                placeholder="Breve descrição do killer..."
               />
             </div>
             
@@ -154,6 +156,17 @@ const MonsterSheet = ({ monster, onUpdate, onClose }) => {
                 className="ph-input"
               />
             </div>
+          </div>
+
+          {/* Ameaças */}
+          <div className="monster-field" style={{marginBottom: '20px'}}>
+            <label>AMEAÇAS</label>
+            <textarea
+              value={monsterData.ameacas}
+              onChange={(e) => updateMonster({ ameacas: e.target.value })}
+              rows="3"
+              placeholder="Descreva as ameaças do killer..."
+            />
           </div>
 
           {/* Armadilhas, Sustos, Brutalidade, Etapas de Fuga */}

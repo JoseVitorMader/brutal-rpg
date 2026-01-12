@@ -27,11 +27,12 @@ const DiceRoller = ({ user, character, updateCharacter, monsters }) => {
       return;
     }
 
-    // Verificar quantos dados estão disponíveis na pilha (apenas para jogadores)
+    // Verificar quantos dados estão disponíveis (baseado em marcadores)
     if (!isMasterMode) {
-      const dadosDisponiveis = character.pilhaDados.filter(d => d).length;
-      if (numDados > dadosDisponiveis) {
-        alert(`Você só tem ${dadosDisponiveis} dados disponíveis na pilha!`);
+      const marcadoresDisponiveis = character.marcadores || 0;
+      // Cada marcador vale 1 dado
+      if (numDados > marcadoresDisponiveis) {
+        alert(`Você só tem ${marcadoresDisponiveis} marcadores disponíveis!`);
         return;
       }
     }
@@ -74,19 +75,12 @@ const DiceRoller = ({ user, character, updateCharacter, monsters }) => {
     const rolagemRef = ref(database, `tables/${user.tableId}/rolls`);
     push(rolagemRef, resultadoRolagem);
 
-    // Se houve fracassos, remover dados da pilha (apenas para jogadores)
+    // Se houve fracassos, aumentar ferida (apenas para jogadores)
     if (!isMasterMode && fracassos > 0) {
-      const novaPilha = [...character.pilhaDados];
-      let dadosRemovidos = 0;
+      const ferida = character.ferida || 0;
+      const novaFerida = Math.min(5, ferida + fracassos);
       
-      for (let i = novaPilha.length - 1; i >= 0 && dadosRemovidos < fracassos; i--) {
-        if (novaPilha[i]) {
-          novaPilha[i] = false;
-          dadosRemovidos++;
-        }
-      }
-      
-      updateCharacter({ pilhaDados: novaPilha });
+      updateCharacter({ ferida: novaFerida });
     }
   };
 
@@ -191,17 +185,22 @@ const DiceRoller = ({ user, character, updateCharacter, monsters }) => {
           <strong>Sucesso:</strong> {
             isMasterMode 
               ? (selectedMonster && periciaSelecionada
-                  ? (selectedMonster.pericias[periciaSelecionada]?.treinada ? '3 ou mais (Perícia Treinada)' : '4 ou mais (Sem Treino)')
+                  ? (selectedMonster.pericias && selectedMonster.pericias[periciaSelecionada]?.treinada ? '3 ou mais (Perícia Treinada)' : '4 ou mais (Sem Treino)')
                   : (isPericiaTreinada ? '3 ou mais (Perícia Treinada)' : '4 ou mais (Sem Treino)'))
-              : (periciaSelecionada && character.pericias[periciaSelecionada]?.treinada 
+              : (periciaSelecionada && character.pericias && character.pericias[periciaSelecionada]?.treinada 
                   ? '3 ou mais (Perícia Treinada)' 
                   : '4 ou mais (Sem Treino)')
           }
         </p>
         {!isMasterMode && (
-          <p>
-            <strong>Dados Disponíveis:</strong> {character.pilhaDados.filter(d => d).length} / 6
-          </p>
+          <>
+            <p>
+              <strong>Marcadores Disponíveis:</strong> {character.marcadores || 0}
+            </p>
+            <p className="info-text">
+              💡 Cada fracasso adiciona 1 ferida. Ferida atual: {character.ferida || 0}/5
+            </p>
+          </>
         )}
       </div>
 
@@ -235,13 +234,13 @@ const DiceRoller = ({ user, character, updateCharacter, monsters }) => {
 
           {resultado.fracassos > 0 && !isMasterMode && (
             <div className="warning-message">
-              ⚠️ {resultado.fracassos} dado(s) removido(s) da pilha de dados!
+              ⚠️ {resultado.fracassos} ferida(s) adicionada(s)! Total: {(character.ferida || 0)}/5
             </div>
           )}
 
           {resultado.fracassos > 0 && isMasterMode && (
             <div className="info-message">
-              ℹ️ Como é uma rolagem do mestre, nenhum dado foi removido da pilha.
+              ℹ️ Como é uma rolagem do mestre, nenhuma ferida foi adicionada.
             </div>
           )}
         </div>

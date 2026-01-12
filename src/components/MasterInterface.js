@@ -117,73 +117,16 @@ const MasterInterface = ({ user }) => {
     set(characterRef, newValue);
   };
 
-  const adjustCharacterDados = (charId, currentPilha, increase) => {
-    const newPilha = [...currentPilha];
-    const filled = newPilha.filter(d => d).length;
-
-    if (increase && filled < 6) {
-      for (let i = 0; i < newPilha.length; i++) {
-        if (!newPilha[i]) {
-          newPilha[i] = true;
-          break;
-        }
-      }
-    } else if (!increase && filled > 0) {
-      for (let i = newPilha.length - 1; i >= 0; i--) {
-        if (newPilha[i]) {
-          newPilha[i] = false;
-          break;
-        }
-      }
+  const adjustCharacterValue = (charId, field, currentValue, increase, max) => {
+    let newValue = currentValue || 0;
+    
+    if (increase && newValue < max) {
+      newValue++;
+    } else if (!increase && newValue > 0) {
+      newValue--;
     }
 
-    updateCharacterResource(charId, 'pilhaDados', newPilha);
-  };
-
-  const adjustCharacterFuga = (charId, currentPilha, increase) => {
-    const newPilha = [...currentPilha];
-    const filled = newPilha.filter(d => d).length;
-
-    if (increase && filled < 7) {
-      for (let i = 0; i < newPilha.length; i++) {
-        if (!newPilha[i]) {
-          newPilha[i] = true;
-          break;
-        }
-      }
-    } else if (!increase && filled > 0) {
-      for (let i = newPilha.length - 1; i >= 0; i--) {
-        if (newPilha[i]) {
-          newPilha[i] = false;
-          break;
-        }
-      }
-    }
-
-    updateCharacterResource(charId, 'pilhaFuga', newPilha);
-  };
-
-  const adjustCharacterFerida = (charId, currentFerida, increase) => {
-    const newNiveis = [...currentFerida.niveis];
-    const filled = newNiveis.filter(d => d).length;
-
-    if (increase && filled < 5) {
-      for (let i = 0; i < newNiveis.length; i++) {
-        if (!newNiveis[i]) {
-          newNiveis[i] = true;
-          break;
-        }
-      }
-    } else if (!increase && filled > 0) {
-      for (let i = newNiveis.length - 1; i >= 0; i--) {
-        if (newNiveis[i]) {
-          newNiveis[i] = false;
-          break;
-        }
-      }
-    }
-
-    updateCharacterResource(charId, 'ferida', { ...currentFerida, niveis: newNiveis });
+    updateCharacterResource(charId, field, newValue);
   };
 
   const renderRolls = () => (
@@ -245,15 +188,21 @@ const MasterInterface = ({ user }) => {
                 <p><strong>Tensão:</strong> {char.tensao || 0}</p>
                 <div className="resource-bars">
                   <div className="resource-item">
-                    <span>Dados:</span>
+                    <span>Ferida:</span>
                     <span className="resource-count">
-                      {char.pilhaDados?.filter(d => d).length || 0} / 6
+                      {char.ferida || 0} / 5
                     </span>
                   </div>
                   <div className="resource-item">
-                    <span>Fuga:</span>
+                    <span>Sequela:</span>
                     <span className="resource-count">
-                      {char.pilhaFuga?.filter(d => d).length || 0} / 7
+                      {char.sequela || 0} / 5
+                    </span>
+                  </div>
+                  <div className="resource-item">
+                    <span>Marcadores:</span>
+                    <span className="resource-count">
+                      {char.marcadores || 0}
                     </span>
                   </div>
                 </div>
@@ -272,84 +221,105 @@ const MasterInterface = ({ user }) => {
             <div className="modal-grid">
               <div className="modal-section">
                 <h3>Informações Básicas</h3>
-                <p><strong>Pronomes:</strong> {selectedCharacter.pronomes}</p>
+                <p><strong>Pronomes:</strong> {selectedCharacter.pronomes || 'Não definido'}</p>
                 <p><strong>Intérprete:</strong> {selectedCharacter.interprete}</p>
                 <p><strong>Arquétipo:</strong> {selectedCharacter.arquetipo}</p>
-                <p><strong>Tensão:</strong> {selectedCharacter.tensao}</p>
-              </div>
-
-              <div className="modal-section">
-                <h3>Apegos</h3>
-                <p><strong>Item Icônico:</strong> {selectedCharacter.apegos?.itemIconico}</p>
-                <p><strong>Relação Afetiva:</strong> {selectedCharacter.apegos?.relacaoAfetiva}</p>
-                <p><strong>Desejo Obscuro:</strong> {selectedCharacter.apegos?.desejoObscuro}</p>
-              </div>
-
-              <div className="modal-section">
-                <h3>Perícias</h3>
-                {Object.entries(selectedCharacter.pericias || {}).map(([pericia, data]) => (
-                  <p key={pericia}>
-                    {pericia}: {data.treinada ? '✓ Treinada' : '○ Não treinada'}
-                  </p>
-                ))}
               </div>
 
               <div className="modal-section">
                 <h3>Recursos</h3>
                 <div className="master-resource-control">
                   <div className="resource-control-row">
-                    <label>Pilha de Dados:</label>
-                    <div className="resource-controls-inline">
-                      <button 
-                        className="resource-btn-master decrease"
-                        onClick={() => adjustCharacterDados(selectedCharacter.id, selectedCharacter.pilhaDados || Array(6).fill(false), false)}
-                        title="Diminuir Dados"
-                      >−</button>
-                      <span className="resource-value">
-                        {selectedCharacter.pilhaDados?.filter(d => d).length || 0} / 6
-                      </span>
-                      <button 
-                        className="resource-btn-master increase"
-                        onClick={() => adjustCharacterDados(selectedCharacter.id, selectedCharacter.pilhaDados || Array(6).fill(false), true)}
-                        title="Aumentar Dados"
-                      >+</button>
-                    </div>
-                  </div>
-                  
-                  <div className="resource-control-row">
-                    <label>Pilha de Fuga:</label>
-                    <div className="resource-controls-inline">
-                      <button 
-                        className="resource-btn-master decrease"
-                        onClick={() => adjustCharacterFuga(selectedCharacter.id, selectedCharacter.pilhaFuga || Array(7).fill(false), false)}
-                        title="Diminuir Fuga"
-                      >−</button>
-                      <span className="resource-value">
-                        {selectedCharacter.pilhaFuga?.filter(d => d).length || 0} / 7
-                      </span>
-                      <button 
-                        className="resource-btn-master increase"
-                        onClick={() => adjustCharacterFuga(selectedCharacter.id, selectedCharacter.pilhaFuga || Array(7).fill(false), true)}
-                        title="Aumentar Fuga"
-                      >+</button>
-                    </div>
-                  </div>
-                  
-                  <div className="resource-control-row">
                     <label>Ferida:</label>
                     <div className="resource-controls-inline">
                       <button 
                         className="resource-btn-master decrease"
-                        onClick={() => adjustCharacterFerida(selectedCharacter.id, selectedCharacter.ferida || { niveis: Array(5).fill(false), descricao: '' }, false)}
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'ferida', selectedCharacter.ferida, false, 5)}
                         title="Diminuir Ferida"
                       >−</button>
                       <span className="resource-value">
-                        {selectedCharacter.ferida?.niveis?.filter(d => d).length || 0} / 5
+                        {selectedCharacter.ferida || 0} / 5
                       </span>
                       <button 
                         className="resource-btn-master increase"
-                        onClick={() => adjustCharacterFerida(selectedCharacter.id, selectedCharacter.ferida || { niveis: Array(5).fill(false), descricao: '' }, true)}
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'ferida', selectedCharacter.ferida, true, 5)}
                         title="Aumentar Ferida"
+                      >+</button>
+                    </div>
+                  </div>
+                  
+                  <div className="resource-control-row">
+                    <label>Sequela:</label>
+                    <div className="resource-controls-inline">
+                      <button 
+                        className="resource-btn-master decrease"
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'sequela', selectedCharacter.sequela, false, 5)}
+                        title="Diminuir Sequela"
+                      >−</button>
+                      <span className="resource-value">
+                        {selectedCharacter.sequela || 0} / 5
+                      </span>
+                      <button 
+                        className="resource-btn-master increase"
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'sequela', selectedCharacter.sequela, true, 5)}
+                        title="Aumentar Sequela"
+                      >+</button>
+                    </div>
+                  </div>
+                  
+                  <div className="resource-control-row">
+                    <label>Marcadores:</label>
+                    <div className="resource-controls-inline">
+                      <button 
+                        className="resource-btn-master decrease"
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'marcadores', selectedCharacter.marcadores, false, 99)}
+                        title="Diminuir Marcadores"
+                      >−</button>
+                      <span className="resource-value">
+                        {selectedCharacter.marcadores || 0}
+                      </span>
+                      <button 
+                        className="resource-btn-master increase"
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'marcadores', selectedCharacter.marcadores, true, 99)}
+                        title="Aumentar Marcadores"
+                      >+</button>
+                    </div>
+                  </div>
+
+                  <div className="resource-control-row">
+                    <label>Tensão:</label>
+                    <div className="resource-controls-inline">
+                      <button 
+                        className="resource-btn-master decrease"
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'tensao', selectedCharacter.tensao, false, 99)}
+                        title="Diminuir Tensão"
+                      >−</button>
+                      <span className="resource-value">
+                        {selectedCharacter.tensao || 0}
+                      </span>
+                      <button 
+                        className="resource-btn-master increase"
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'tensao', selectedCharacter.tensao, true, 99)}
+                        title="Aumentar Tensão"
+                      >+</button>
+                    </div>
+                  </div>
+
+                  <div className="resource-control-row">
+                    <label>Dificuldade:</label>
+                    <div className="resource-controls-inline">
+                      <button 
+                        className="resource-btn-master decrease"
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'dificuldade', selectedCharacter.dificuldade, false, 6)}
+                        title="Diminuir Dificuldade"
+                      >−</button>
+                      <span className="resource-value">
+                        {selectedCharacter.dificuldade || 3}
+                      </span>
+                      <button 
+                        className="resource-btn-master increase"
+                        onClick={() => adjustCharacterValue(selectedCharacter.id, 'dificuldade', selectedCharacter.dificuldade, true, 6)}
+                        title="Aumentar Dificuldade"
                       >+</button>
                     </div>
                   </div>
@@ -357,19 +327,38 @@ const MasterInterface = ({ user }) => {
               </div>
 
               <div className="modal-section">
-                <h3>Habilidades</h3>
-                <p>{selectedCharacter.habilidades || 'Nenhuma habilidade descrita'}</p>
+                <h3>Habilidade Selecionada</h3>
+                {selectedCharacter.habilidadeSelecionada ? (
+                  <div className="habilidade-display">
+                    <h4>{selectedCharacter.habilidadeSelecionada.nome}</h4>
+                    <p>{selectedCharacter.habilidadeSelecionada.descricao}</p>
+                  </div>
+                ) : (
+                  <p>Nenhuma habilidade selecionada</p>
+                )}
+                {selectedCharacter.cicatrizAdicionada && (
+                  <div className="cicatriz-display">
+                    <h4>Cicatriz Adicionada</h4>
+                  </div>
+                )}
               </div>
 
               <div className="modal-section">
-                <h3>Marcadores</h3>
-                <p>{selectedCharacter.marcadores || 'Nenhum marcador'}</p>
+                <h3>Apegos</h3>
+                <p><strong>Item Icônico:</strong> {selectedCharacter.itemIconico || 'Não definido'}</p>
+                <p><strong>Relação Afetiva:</strong> {selectedCharacter.relacaoAfetiva || 'Não definido'}</p>
+                <p><strong>Desejo Obscuro:</strong> {selectedCharacter.desejoObscuro || 'Não definido'}</p>
               </div>
 
-              {selectedCharacter.aparencia && (
+              <div className="modal-section full-width">
+                <h3>Anotações</h3>
+                <p style={{whiteSpace: 'pre-wrap'}}>{selectedCharacter.anotacoes || 'Nenhuma anotação'}</p>
+              </div>
+
+              {selectedCharacter.imagemPersonagem && (
                 <div className="modal-section">
                   <h3>Aparência</h3>
-                  <img src={selectedCharacter.aparencia} alt="Personagem" className="character-image" />
+                  <img src={selectedCharacter.imagemPersonagem} alt="Personagem" className="character-image" />
                 </div>
               )}
             </div>
@@ -438,11 +427,12 @@ const MasterInterface = ({ user }) => {
                 </div>
               )}
               <p className="monster-description">
-                {monster.descricao ? monster.descricao.substring(0, 100) + '...' : 'Sem descrição'}
+                {monster.descricao ? monster.descricao.substring(0, 100) + '...' : monster.ameacas ? monster.ameacas.substring(0, 100) + '...' : 'Sem descrição'}
               </p>
               <div className="monster-resources">
-                <span>Dados: {monster.pilhaDados?.filter(d => d).length || 0}/6</span>
-                <span>Ferida: {monster.ferida?.niveis?.filter(d => d).length || 0}/5</span>
+                <span>PH: {monster.pontosHorror || 0}</span>
+                <span>Armadilhas: {monster.armadilhas?.filter(d => d).length || 0}/4</span>
+                <span>Sustos: {monster.sustos?.filter(d => d).length || 0}/5</span>
               </div>
             </div>
           ))}

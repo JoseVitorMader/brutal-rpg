@@ -1,0 +1,844 @@
+/* ==================== LAYOUT GERAL ==================== */
+.character-sheet {
+  padding: 10px;
+  background: transparent;
+  color: #fff;
+  min-height: 100vh;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ==================== HEADER COMPACTO ==================== */
+.sheet-header-compact {
+  display: flex;
+  gap: 15px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #8B0000;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+/* Avatar */
+.char-avatar {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.char-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 2px solid #8B0000;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border: 2px solid #8B0000;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  color: #333;
+}
+
+.avatar-upload {
+  display: none;
+}
+
+.avatar-upload-label {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #8B0000;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s;
+}
+
+.avatar-upload-label:hover {
+  background: #a00000;
+  transform: scale(1.1);
+}
+
+/* Identidade */
+.char-identity {
+  flex: 1;
+  display: flex;
+  gap: 15px;
+}
+
+.char-name-group,
+.char-origin-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.char-name-group label,
+.char-origin-group label,
+.char-class-group label {
+  font-size: 9px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.char-name-input,
+.char-origin-input,
+.char-jogador-input,
+.char-class-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #333;
+  color: #fff;
+  font-size: 16px;
+  padding: 4px 0;
+  font-weight: bold;
+}
+
+.char-name-input {
+  font-size: 18px;
+  border-bottom: 2px solid #8B0000;
+}
+
+.char-name-input:focus,
+.char-origin-input:focus,
+.char-jogador-input:focus,
+.char-class-input:focus {
+  outline: none;
+  border-bottom-color: #8B0000;
+}
+
+/* Classe */
+.char-class-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.char-class-input {
+  background: #000;
+  border: 1px solid #8B0000;
+  border-radius: 3px;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+/* ==================== LAYOUT PRINCIPAL ==================== */
+.sheet-main-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* ==================== COLUNA ESQUERDA ==================== */
+.sheet-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Círculos de Recursos */
+.resources-circle-section {
+  display: flex;
+  justify-content: space-around;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #8B0000;
+  gap: 15px;
+}
+
+.resource-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.resource-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 3px solid #8B0000;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+  transition: all 0.3s;
+}
+
+.resource-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.resource-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: 2px solid #8B0000;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  color: #8B0000;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.resource-btn:hover {
+  background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.6);
+}
+
+.resource-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.4);
+}
+
+.resource-btn.decrease:hover {
+  background: linear-gradient(135deg, #666 0%, #444 100%);
+  color: #fff;
+  border-color: #888;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.circle-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #8B0000;
+  line-height: 1;
+}
+
+.circle-label {
+  font-size: 9px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
+.circle-max {
+  font-size: 10px;
+  color: #444;
+}
+
+/* Tensão Total */
+.tensao-total-box {
+  background: #000;
+  border: 1px solid #8B0000;
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tensao-total-box label {
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tensao-total-input {
+  background: transparent;
+  border: none;
+  color: #8B0000;
+  font-size: 24px;
+  font-weight: bold;
+  width: 60px;
+  text-align: right;
+}
+
+.tensao-total-input:focus {
+  outline: none;
+}
+
+/* Perícias */
+.pericias-section {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  border: 1px solid #8B0000;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.pericias-section h2 {
+  font-size: 12px;
+  color: #8B0000;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 6px;
+}
+
+.pericias-table {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pericias-header {
+  display: grid;
+  grid-template-columns: 1fr 60px 60px 50px;
+  gap: 8px;
+  font-size: 9px;
+  color: #666;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 4px;
+}
+
+.pericia-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 60px 50px;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #000;
+  border-radius: 3px;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.pericia-row:hover {
+  background: #1a0000;
+  border: 1px solid #8B0000;
+}
+
+.pericia-name-cell {
+  font-size: 13px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.pericia-dados,
+.pericia-bonus {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+}
+
+.pericia-treino-cell {
+  display: flex;
+  justify-content: center;
+}
+
+.pericia-treino-cell input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #8B0000;
+  cursor: pointer;
+}
+
+/* ==================== COLUNA DIREITA ==================== */
+.sheet-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Tabs */
+.sheet-tabs {
+  display: flex;
+  gap: 4px;
+  background: #000;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #333;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: transparent;
+  color: #666;
+  border: none;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.tab-btn:hover {
+  background: #1a1a1a;
+  color: #888;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+}
+
+/* Apegos Compactos */
+.apegos-compact {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  border: 1px solid #8B0000;
+  border-radius: 6px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+}
+
+.apego-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.apego-item label {
+  font-size: 9px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.apego-item input {
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 3px;
+  color: #fff;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.apego-item input:focus {
+  outline: none;
+  border-color: #8B0000;
+  box-shadow: 0 0 8px rgba(139, 0, 0, 0.3);
+}
+
+/* DiceRoller Compacto */
+.dice-roller-compact {
+  margin-top: 12px;
+}
+
+.dice-roller-compact .dice-roller {
+  padding: 10px;
+  margin-top: 0;
+}
+
+.dice-roller-compact .dice-roller h2 {
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.dice-roller-compact .roller-controls {
+  gap: 8px;
+}
+
+.dice-roller-compact .control-group label {
+  font-size: 10px;
+}
+
+.dice-roller-compact .dice-input,
+.dice-roller-compact .pericia-select {
+  padding: 6px 10px;
+  font-size: 12px;
+  min-width: 100px;
+}
+
+.dice-roller-compact .roll-button {
+  padding: 6px 16px;
+  font-size: 13px;
+}
+
+.dice-roller-compact .dice-info {
+  padding: 8px;
+  font-size: 11px;
+}
+
+.dice-roller-compact .dice-info p {
+  margin: 4px 0;
+}
+
+/* Sistema de Vantagens com Inventário */
+.vantagens-system {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  border: 1px solid #8B0000;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.vantagens-system h3 {
+  font-size: 12px;
+  color: #ff6b6b;
+  margin: 15px 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-bottom: 2px solid #8B0000;
+  padding-bottom: 6px;
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
+}
+
+.vantagens-system h3:first-child {
+  margin-top: 0;
+}
+
+.vantagens-categoria {
+  margin-bottom: 15px;
+}
+
+.vantagens-categoria h4 {
+  font-size: 10px;
+  color: #888;
+  margin: 8px 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.vantagem-loja-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  transition: all 0.3s;
+}
+
+.vantagem-loja-item.comprada {
+  background: linear-gradient(135deg, #1a0a00 0%, #0a0000 100%);
+  border-color: #8B0000;
+}
+
+.vantagem-loja-item .vantagem-nome {
+  flex: 1;
+  font-size: 12px;
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.vantagem-loja-item .vantagem-custo {
+  font-size: 11px;
+  color: #888;
+}
+
+.btn-comprar,
+.btn-desfazer,
+.btn-usar,
+.btn-cancelar {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+}
+
+.btn-comprar {
+  background: linear-gradient(135deg, #8B0000 0%, #6a0000 100%);
+  color: #fff;
+  border: 1px solid #a00000;
+}
+
+.btn-comprar:hover:not(:disabled) {
+  background: linear-gradient(135deg, #a00000 0%, #8B0000 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+}
+
+.btn-comprar:disabled {
+  background: #333;
+  color: #666;
+  border-color: #444;
+  cursor: not-allowed;
+}
+
+.btn-desfazer {
+  background: linear-gradient(135deg, #666 0%, #444 100%);
+  color: #fff;
+  border: 1px solid #888;
+}
+
+.btn-desfazer:hover {
+  background: linear-gradient(135deg, #777 0%, #555 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.inventario-vantagens,
+.vantagens-usadas {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inventario-vazio {
+  text-align: center;
+  color: #666;
+  font-size: 11px;
+  font-style: italic;
+  padding: 15px;
+  background: #000;
+  border-radius: 4px;
+  border: 1px solid #333;
+}
+
+.vantagem-inventario-item,
+.vantagem-usada-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  background: linear-gradient(135deg, #0a0a0a 0%, #001a00 100%);
+  border: 1px solid #2d5016;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.vantagem-inventario-item:hover {
+  border-color: #51cf66;
+  box-shadow: 0 0 10px rgba(81, 207, 102, 0.2);
+}
+
+.vantagem-usada-item {
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  border-color: #666;
+  opacity: 0.7;
+}
+
+.vantagem-usada-item:hover {
+  opacity: 1;
+  border-color: #888;
+}
+
+.vantagem-inventario-item .vantagem-nome,
+.vantagem-usada-item .vantagem-nome {
+  flex: 1;
+  font-size: 12px;
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.btn-usar {
+  background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+  color: #000;
+  border: 1px solid #69db7c;
+}
+
+.btn-usar:hover {
+  background: linear-gradient(135deg, #69db7c 0%, #51cf66 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(81, 207, 102, 0.5);
+}
+
+.btn-cancelar {
+  background: linear-gradient(135deg, #ff8c00 0%, #cc7000 100%);
+  color: #fff;
+  border: 1px solid #ffa500;
+}
+
+.btn-cancelar:hover {
+  background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+}
+
+/* Vantagens Compactas (manter para compatibilidade) */
+.vantagens-compact {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  border: 1px solid #8B0000;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.vantagens-compact h3 {
+  font-size: 11px;
+  color: #8B0000;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 6px;
+}
+
+.vantagens-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.vantagem-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: #000;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vantagem-checkbox:hover {
+  background: #1a0000;
+  border: 1px solid #8B0000;
+}
+
+.vantagem-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #8B0000;
+  cursor: pointer;
+}
+
+.vantagem-checkbox span {
+  font-size: 12px;
+  color: #ccc;
+}
+
+/* Habilidades */
+.habilidades-compact,
+.marcadores-compact {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0000 100%);
+  border: 1px solid #8B0000;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.habilidades-compact h3,
+.marcadores-compact h3 {
+  font-size: 11px;
+  color: #8B0000;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 6px;
+}
+
+.habilidades-compact textarea,
+.marcadores-compact textarea {
+  width: 100%;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 3px;
+  color: #ccc;
+  padding: 8px;
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+  resize: vertical;
+}
+
+.habilidades-compact textarea:focus,
+.marcadores-compact textarea:focus {
+  outline: none;
+  border-color: #8B0000;
+  box-shadow: 0 0 8px rgba(139, 0, 0, 0.3);
+}
+
+/* Ferida Níveis */
+.ferida-niveis {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.ferida-box {
+  width: 36px;
+  height: 36px;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.ferida-box:hover {
+  border-color: #8B0000;
+  box-shadow: 0 0 10px rgba(139, 0, 0, 0.3);
+}
+
+.ferida-box input[type="checkbox"] {
+  display: none;
+}
+
+.ferida-box span {
+  font-size: 14px;
+  color: #666;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.ferida-box:has(input[type="checkbox"]:checked) {
+  background: #1a0000;
+  border-color: #8B0000;
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+}
+
+.ferida-box:has(input[type="checkbox"]:checked) span {
+  color: #8B0000;
+}
+
+/* ==================== RESPONSIVO ==================== */
+@media (max-width: 1200px) {
+  .sheet-main-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .resources-circle-section {
+    justify-content: space-evenly;
+  }
+}
+
+@media (max-width: 768px) {
+  .sheet-header-compact {
+    flex-direction: column;
+  }
+  
+  .char-identity {
+    flex-direction: column;
+  }
+  
+  .apegos-compact {
+    flex-direction: column;
+  }
+  
+  .sheet-tabs {
+    flex-wrap: wrap;
+  }
+}
