@@ -60,11 +60,10 @@ const CharacterSheet = ({ user, initialArchetype }) => {
 
   // Sistema de marcadores (funciona como dados)
   const [marcadoresLista, setMarcadoresLista] = useState([]);
-
-  const characterRef = ref(database, `tables/${user.tableId}/characters/${user.userId}`);
+  const characterPath = `tables/${user.tableId}/characters/${user.userId}`;
 
   // Função para limpar e migrar dados antigos
-  const cleanCharacterData = (data) => {
+  const cleanCharacterData = React.useCallback((data) => {
     const cleaned = {
       nome: typeof data.nome === 'string' ? data.nome : 'Nova personagem',
       pronomes: typeof data.pronomes === 'string' ? data.pronomes : '',
@@ -89,9 +88,10 @@ const CharacterSheet = ({ user, initialArchetype }) => {
       imagemPersonagem: typeof data.imagemPersonagem === 'string' ? data.imagemPersonagem : ''
     };
     return cleaned;
-  };
+  }, [user.email]);
 
   useEffect(() => {
+    const characterRef = ref(database, characterPath);
     const unsubscribe = onValue(characterRef, (snapshot) => {
       if (snapshot.exists()) {
         const loadedChar = cleanCharacterData(snapshot.val());
@@ -123,17 +123,17 @@ const CharacterSheet = ({ user, initialArchetype }) => {
           cicatrizAdicionada: false
         };
         setCharacter(newCharacter);
-        set(characterRef, newCharacter);
+        set(ref(database, characterPath), newCharacter);
       }
     });
 
-    return () => unsubscribe();
-  }, [user.tableId, user.userId, initialArchetype]);
+    return () => unsubscribe(); //eslint-disable-next-line
+  }, [characterPath, cleanCharacterData, initialArchetype]);
 
   const updateCharacter = (updates) => {
     const updatedCharacter = { ...character, ...updates };
     setCharacter(updatedCharacter);
-    set(characterRef, updatedCharacter);
+    set(ref(database, characterPath), updatedCharacter);
   };
 
   const changeValue = (field, delta) => {
@@ -289,7 +289,6 @@ const CharacterSheet = ({ user, initialArchetype }) => {
 
   // Descartar dados abaixo da dificuldade
   const descartarDados = () => {
-    const dadosDescartados = dadosRolagem.filter(d => d.valor < character.dificuldade);
     const dadosRestantes = dadosRolagem.filter(d => d.valor >= character.dificuldade);
     setDadosRolagem(dadosRestantes);
     // Opcionalmente, você pode fazer algo com os dados descartados
@@ -452,9 +451,9 @@ const CharacterSheet = ({ user, initialArchetype }) => {
           <div className="arquetipo-section">
             <div className="arquetipo-header">
               <h3>{character.arquetipo || 'Selecione um Arquétipo'}</h3>
-              <a href="#" className="edit-link" onClick={(e) => { e.preventDefault(); setShowArchetypeSelector(true); }}>
+              <button type="button" className="edit-link" onClick={() => setShowArchetypeSelector(true)}>
                 <img src="/images/objects/brutal-edit-icon.svg" alt="Edit" />
-              </a>
+              </button>
             </div>
             
             <div className="arquetipo-qualities">

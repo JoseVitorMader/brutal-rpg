@@ -14,6 +14,7 @@ const MasterInterface = ({ user }) => {
   const [monsters, setMonsters] = useState([]);
   const [selectedMonster, setSelectedMonster] = useState(null);
   const [showMonsterSheet, setShowMonsterSheet] = useState(false);
+  //eslint-disable-next-line no-unused-vars
   const [members, setMembers] = useState({});
 
   useEffect(() => {
