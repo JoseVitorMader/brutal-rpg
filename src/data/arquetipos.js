@@ -54,7 +54,7 @@ export const ARQUETIPOS_DATA = {
   },
   'Cética': {
     nome: 'Cética',
-    qualidades: ['Analítica', 'Desconfiada'],
+    qualidades: ['Firme', 'Sagaz'],
     vantagens: [
       {
         id: 'resistir-a-dor',
@@ -106,7 +106,7 @@ export const ARQUETIPOS_DATA = {
   },
   'Esbelta': {
     nome: 'Esbelta',
-    qualidades: ['Ágil', 'Elegante'],
+    qualidades: ['Desenrolado', 'Firme'],
     vantagens: [
       {
         id: 'resistir-a-dor',
@@ -158,7 +158,7 @@ export const ARQUETIPOS_DATA = {
   },
   'Heroína': {
     nome: 'Heroína',
-    qualidades: ['Corajosa', 'Inspiradora'],
+    qualidades: ['Potente', 'Sagaz'],
     vantagens: [
       {
         id: 'surpreender',
@@ -210,7 +210,7 @@ export const ARQUETIPOS_DATA = {
   },
   'Inocente': {
     nome: 'Inocente',
-    qualidades: ['Pura', 'Esperançosa'],
+    qualidades: ['Desenrolado', 'Sagaz'],
     vantagens: [
       {
         id: 'compartilhar-forcas',
@@ -262,7 +262,7 @@ export const ARQUETIPOS_DATA = {
   },
   'Nerd': {
     nome: 'Nerd',
-    qualidades: ['Inteligente', 'Estudiosa'],
+    qualidades: ['Ligeiro', 'Sagaz'],
     vantagens: [
       {
         id: 'planejar-fuga',
@@ -314,7 +314,7 @@ export const ARQUETIPOS_DATA = {
   },
   'Relaxada': {
     nome: 'Relaxada',
-    qualidades: ['Calma', 'Resiliente'],
+    qualidades: ['Desenrolado', 'Ligeiro'],
     vantagens: [
       {
         id: 'planejar-fuga',
@@ -366,7 +366,7 @@ export const ARQUETIPOS_DATA = {
   },
   'Valentona': {
     nome: 'Valentona',
-    qualidades: ['Agressiva', 'Intimidadora'],
+    qualidades: ['Firme', 'Potente'],
     vantagens: [
       {
         id: 'surpreender',

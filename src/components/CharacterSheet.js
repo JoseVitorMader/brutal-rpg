@@ -34,7 +34,7 @@ const CharacterSheet = ({ user, initialArchetype }) => {
     recursos: '',
     dificuldade: 3,
     tensao: 0,
-    habilidadeSelecionada: null,
+    habilidadesSelecionadas: [],
     cicatrizAdicionada: false,
     anotacoes: '',
     aparencia: '',
@@ -76,7 +76,9 @@ const CharacterSheet = ({ user, initialArchetype }) => {
       recursos: typeof data.recursos === 'string' ? data.recursos : '',
       dificuldade: typeof data.dificuldade === 'number' ? data.dificuldade : 3,
       tensao: typeof data.tensao === 'number' ? data.tensao : 0,
-      habilidadeSelecionada: data.habilidadeSelecionada && typeof data.habilidadeSelecionada === 'object' && data.habilidadeSelecionada.nome ? data.habilidadeSelecionada : null,
+      habilidadesSelecionadas: Array.isArray(data.habilidadesSelecionadas)
+        ? data.habilidadesSelecionadas
+        : (data.habilidadeSelecionada && typeof data.habilidadeSelecionada === 'object' && data.habilidadeSelecionada.nome ? [data.habilidadeSelecionada] : []),
       cicatrizAdicionada: typeof data.cicatrizAdicionada === 'boolean' ? data.cicatrizAdicionada : false,
       anotacoes: typeof data.anotacoes === 'string' ? data.anotacoes : '',
       aparencia: typeof data.aparencia === 'string' ? data.aparencia : '',
@@ -93,11 +95,11 @@ const CharacterSheet = ({ user, initialArchetype }) => {
     const unsubscribe = onValue(characterRef, (snapshot) => {
       if (snapshot.exists()) {
         const loadedChar = cleanCharacterData(snapshot.val());
-        // Se não tem habilidade selecionada, define a primeira do arquétipo
-        if (!loadedChar.habilidadeSelecionada) {
+        // Se não tem habilidades selecionadas, define a primeira do arquétipo
+        if (!loadedChar.habilidadesSelecionadas || loadedChar.habilidadesSelecionadas.length === 0) {
           const habilidadesData = getHabilidadesData(loadedChar.arquetipo);
           if (habilidadesData?.habilidades?.[0]) {
-            loadedChar.habilidadeSelecionada = habilidadesData.habilidades[0];
+            loadedChar.habilidadesSelecionadas = [habilidadesData.habilidades[0]];
           }
         }
         setCharacter(prevChar => ({ ...prevChar, ...loadedChar }));
@@ -117,7 +119,7 @@ const CharacterSheet = ({ user, initialArchetype }) => {
           pilhaDados: 6,
           pilhaFuga: 0,
           tensao: 0,
-          habilidadeSelecionada: habilidadesData?.habilidades?.[0] || null,
+          habilidadesSelecionadas: habilidadesData?.habilidades?.[0] ? [habilidadesData.habilidades[0]] : [],
           cicatrizAdicionada: false
         };
         setCharacter(newCharacter);
@@ -143,15 +145,22 @@ const CharacterSheet = ({ user, initialArchetype }) => {
     const habilidadesData = getHabilidadesData(newArchetype);
     updateCharacter({ 
       arquetipo: newArchetype,
-      habilidadeSelecionada: habilidadesData?.habilidades?.[0] || null,
+          habilidadesSelecionadas: habilidadesData?.habilidades?.[0] ? [habilidadesData.habilidades[0]] : [],
       cicatrizAdicionada: false
     });
     setShowArchetypeSelector(false);
   };
 
   const handleHabilidadeSelect = (habilidade) => {
-    updateCharacter({ habilidadeSelecionada: habilidade });
-    setShowHabilidadeSelector(false);
+    const current = Array.isArray(character.habilidadesSelecionadas) ? character.habilidadesSelecionadas : [];
+    const exists = current.some(h => h && h.nome === habilidade.nome);
+    let updated;
+    if (exists) {
+      updated = current.filter(h => h.nome !== habilidade.nome);
+    } else {
+      updated = [...current, habilidade];
+    }
+    updateCharacter({ habilidadesSelecionadas: updated });
   };
 
   const handleCicatrizAdd = () => {
@@ -520,31 +529,43 @@ const CharacterSheet = ({ user, initialArchetype }) => {
                 const habilidadesData = getHabilidadesData(character.arquetipo);
                 return (
                   <>
-                    {/* Habilidade Selecionada */}
+                    {/* Habilidades Selecionadas */}
                     <div className="habilidade-section">
-                      <h3>Habilidade</h3>
-                      {character.habilidadeSelecionada ? (
-                        <div className="habilidade-card">
-                          <div className="vantagem-header">
-                            <div className="vantagem-icon-container">
-                              <img src="/images/objects/brutal-skull-icon.svg" alt="habilidade" />
-                            </div>
-                            <div className="vantagem-info">
-                              <div className="vantagem-refresh">
-                                <img src="/images/objects/brutal-recarga-icon.svg" alt="refresh" />
-                                <span>{character.habilidadeSelecionada.restricao}</span>
+                      <h3>Habilidades</h3>
+                      {character.habilidadesSelecionadas && character.habilidadesSelecionadas.length > 0 ? (
+                        <div className="habilidades-list">
+                          {character.habilidadesSelecionadas.map((hab, idx) => (
+                            <div key={idx} className="habilidade-card">
+                              <div className="vantagem-header">
+                                <div className="vantagem-icon-container">
+                                  <img src="/images/objects/brutal-skull-icon.svg" alt="habilidade" />
+                                </div>
+                                <div className="vantagem-info">
+                                  <div className="vantagem-refresh">
+                                    <img src="/images/objects/brutal-recarga-icon.svg" alt="refresh" />
+                                    <span>{hab.restricao}</span>
+                                  </div>
+                                </div>
+                                <button 
+                                  className="remove-icon-btn"
+                                  onClick={() => handleHabilidadeSelect(hab)}
+                                  title="Remover habilidade"
+                                >
+                                  ❌
+                                </button>
                               </div>
+                              <h4 className="vantagem-title">{hab.nome}</h4>
+                              <p className="vantagem-description">{hab.descricao}</p>
                             </div>
-                            <button 
-                              className="edit-icon-btn"
-                              onClick={() => setShowHabilidadeSelector(true)}
-                              title="Editar habilidade"
-                            >
-                              ✏️
-                            </button>
-                          </div>
-                          <h4 className="vantagem-title">{character.habilidadeSelecionada.nome}</h4>
-                          <p className="vantagem-description">{character.habilidadeSelecionada.descricao}</p>
+                          ))}
+                          <button 
+                            className="edit-habilidades-btn"
+                            onClick={() => setShowHabilidadeSelector(true)}
+                            title="Editar habilidades"
+                          >
+                            <img src="/images/objects/brutal-edit-icon.svg" alt="Editar" className="edit-btn-icon" />
+                            <span>Editar Habilidades</span>
+                          </button>
                         </div>
                       ) : (
                         <button 
@@ -857,10 +878,12 @@ const CharacterSheet = ({ user, initialArchetype }) => {
             <div className="habilidades-grid">
               {(() => {
                 const habilidadesData = getHabilidadesData(character.arquetipo);
-                return habilidadesData?.habilidades.map((habilidade, index) => (
+                return habilidadesData?.habilidades.map((habilidade, index) => {
+                  const isSelected = (character.habilidadesSelecionadas || []).some(h => h && h.nome === habilidade.nome);
+                  return (
                   <div 
                     key={index}
-                    className="habilidade-option"
+                    className={`habilidade-option ${isSelected ? 'selected' : ''}`}
                     onClick={() => handleHabilidadeSelect(habilidade)}
                   >
                     <div className="vantagem-header">
@@ -877,7 +900,8 @@ const CharacterSheet = ({ user, initialArchetype }) => {
                     <h4 className="vantagem-title">{habilidade.nome}</h4>
                     <p className="vantagem-description">{habilidade.descricao}</p>
                   </div>
-                ));
+                );
+                });
               })()}
             </div>
             <button className="close-modal-btn" onClick={() => setShowHabilidadeSelector(false)}>

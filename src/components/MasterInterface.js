@@ -327,11 +327,15 @@ const MasterInterface = ({ user }) => {
               </div>
 
               <div className="modal-section">
-                <h3>Habilidade Selecionada</h3>
-                {selectedCharacter.habilidadeSelecionada ? (
-                  <div className="habilidade-display">
-                    <h4>{selectedCharacter.habilidadeSelecionada.nome}</h4>
-                    <p>{selectedCharacter.habilidadeSelecionada.descricao}</p>
+                <h3>Habilidades Selecionadas</h3>
+                {selectedCharacter.habilidadesSelecionadas && selectedCharacter.habilidadesSelecionadas.length > 0 ? (
+                  <div className="habilidades-display">
+                    {selectedCharacter.habilidadesSelecionadas.map((hab, i) => (
+                      <div key={i} className="habilidade-display">
+                        <h4>{typeof hab.nome === 'string' ? hab.nome : JSON.stringify(hab.nome)}</h4>
+                        <p>{typeof hab.descricao === 'string' ? hab.descricao : JSON.stringify(hab.descricao)}</p>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <p>Nenhuma habilidade selecionada</p>
